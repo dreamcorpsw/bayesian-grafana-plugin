@@ -5,7 +5,7 @@ module.exports = {
   ],
   "setupFiles": [
     // "<rootDir>/dist/test/test-setup/jest-setup.js"
-    //"<rootDir>/src/test-setup/jest-setup.js"
+    "<rootDir>/src/test-setup/jest-setup.js"
   ],
   "moduleFileExtensions": [
     "ts",
