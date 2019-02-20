@@ -9,7 +9,7 @@
     "watch": "webpack --config webpack/webpack.dev.conf.js --progress --colors",
     "test": "jest --coverage",
     "jest": "jest --notify --watch",
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
+    "coveralls": "jest --coverage --coverageReporters=text-lcov| coveralls",
     "codecov": "jest --coverage && codecov",
     "ci-test": "jest --coverage && codecov",
     "lint": "jshint --reporter=node_modules/jshint-stylish src/ & jscs src/"
