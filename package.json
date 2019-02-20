@@ -7,7 +7,7 @@
     "build": "webpack --config webpack/webpack.prod.conf.js --progress --colors",
     "dev": "webpack --config webpack/webpack.dev.conf.js --progress --colors",
     "watch": "webpack --config webpack/webpack.dev.conf.js --progress --colors",
-    "test": "jest",
+    "test": "jest --coverage",
     "jest": "jest --notify --watch",
     "codecov": "jest --coverage && codecov",
     "ci-test": "jest --coverage && codecov",
