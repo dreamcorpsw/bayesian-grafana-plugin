@@ -17,7 +17,9 @@ module.exports = {
   entry: {
     './module': './module.js',
     'components/config': './components/config.js',
-    'panel/module': './panel/module.ts',
+    'panels/graph/module': './panels/graph/module.ts',
+    'panels/bayesian-graph/module': './panels/bayesian-graph/module.js',
+    'panels/net-status-panel/module': './panels/net-status-panel/module.js'
   },
   output: {
     filename: "[name].js",

@@ -4,13 +4,17 @@ import {path, getJsonAsText} from './utils';
 class AppCtrl extends EventEmitter{
     constructor(){
         super();
+        this.i = 0;
         console.info("new AppCtrl");
-        const my_url = path()+'/networks/rete.json';
-        getJsonAsText(this,my_url);
+        this.getNet();
+    }
+    test(){
+        console.info(this.i++);
     }
     createBN(text) {
         console.info("createBN() - App");
         var rete = JSON.parse(text);
+        this.net = rete;
         
         const jsbayes = require('jsbayes');
         this.g = jsbayes.newGraph();
@@ -89,7 +93,8 @@ class AppCtrl extends EventEmitter{
         //ricorda se è già stato associato un nodo oppure no
         //this.associated = false;  //true: associato / false: non associato
     }
-    getAlertData(panel,backendSrv){
+    //funzione brutta
+    getAlertData(panel,backendSrv,nodePos){
         this.backendSrv = backendSrv;
         //info for the http request
         const payload = {
@@ -110,7 +115,7 @@ class AppCtrl extends EventEmitter{
                     if(res[0].evalData.evalMatches !== null){
                         alert_value = res[0].evalData.evalMatches[0].value;
                         console.info("Valore Alert from appCtrl:" + alert_value);
-                        //this.ThresholdToState(alert_value); //mi cambia lo stato a quello che conta dettato dal valore dell'alert
+                        this.ThresholdToState(alert_value,nodePos); //mi cambia lo stato a quello che conta dettato dal valore dell'alert
                     }
                     else {
                         console.error("evalMatches null");
@@ -122,13 +127,73 @@ class AppCtrl extends EventEmitter{
             }
         });
     }
+    ThresholdToState(value,nodePos){
+        this.nodePos = nodePos;
+        console.info("ThresholdToState");
+        let threshold=0;
+        let index = 0;
+        for(let i =0;i<this.threshold_nodes[this.nodePos].length-1;i++){ //per tutte le soglie del nodo considerato
+            threshold = this.threshold_nodes[this.nodePos][i]; //soglia i-esima
+            if(value>threshold){ //se la supero, sono almeno nello stato dopo
+                console.info(value+">"+threshold);
+                index++; //mi sposto sullo stato successivo
+            }
+            else break; //esco dal ciclo quando non accade
+        }
+        console.info("Stato identificato:" +(index+1));
+        this.statePos = index; //modifico lo stato in base alla soglia
+        this.associate();
+    }
+    showProb(){
+        //output probabilità
+        for (let x = 0;x<this.nodi.length;x++){
+            console.info(this.nodi[x].probs());
+        }
+    }
+    getProbs(){
+        this.g.sample(10000);
+        const probs = [];
+        for (let x = 0;x<this.nodi.length;x++){
+            probs.push(this.nodi[x].probs());
+        }
+        return probs;
+    }
+    associate(){
+        this.g.observe(this.nodi[this.nodePos].name,this.states_nodes[this.nodePos][this.statePos]);
+        this.g.sample(this.samples);
+        this.showProb();
+    }
+    dissociate(nodePos){
+        this.g.unobserve(this.nodi[nodePos].name);
+        this.g.sample(this.samples);
+        this.showProb();
+    }
+    getNet(){
+        const my_url = path()+'/networks/rete.json';
+        getJsonAsText(this,my_url); //lancia insieme anche createBN
+        return this.net; //ritorno il valore assicurandomi che sia presente la rete
+    }
+    
 }
+
 //istanza
 const appCtrl = new AppCtrl();
 //listen "on", serve per creare funzioni di cui poi potrò fare "emit"
-appCtrl.on('associate', (nodeId,panel, backendSrv) => {
+appCtrl.on('associate', (nodeId,nodePos,panel,backendSrv) => {
     console.log("Associated with "+ nodeId +" at panel "+panel);
-    appCtrl.getAlertData(panel,backendSrv);
+    appCtrl.getAlertData(panel,backendSrv,nodePos);
 });
+
+appCtrl.on('dissociate', (nodeId,nodePos) => {
+    console.log("Dissociated with "+ nodeId);
+    appCtrl.dissociate(nodePos);
+});
+
+appCtrl.on('net-request',function () {
+        console.info("net-request");
+    }
+);
+
+
 //export this instance
 module.exports = appCtrl;

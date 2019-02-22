@@ -20,12 +20,42 @@
     </div>
 
     <div class="gf-form-inline">
-        <div class="gf-form gf-form--right-margin">
-            <label class="gf-form-label width-9">Net Name</label>
-            <input class="gf-form-input max-width-15" type="text" ng-model="ctrl.panel.name">
-        </div>
         <div class="gf-form">
             <button class="btn btn-success" ng-click="ctrl.test(ctrl.panel.name)">Insert Bayesian Network</button>
         </div>
     </div>
 </div>
+
+<!-- Display the net-->
+
+<div class="editor-row" ng-if="editor.nets">
+    <!-- Configuration -->
+    <div class="section gf-form-group">
+        <h5 class="section-heading">Bayesian Network List</h5>
+        <div class="gf-form" >
+            <span class="gf-form-label width-10">Bayesian Network:</span>
+            <div class="gf-form-select-wrapper width-8">
+                <select  class="gf-form-input" ng-init="ctrl.panel.rete_id=editor.nets[0]" ng-model="ctrl.panel.rete_id" ng-options="t for t in editor.nets"></select>
+            </div>
+        </div>
+        <div ng-repeat="net in editor.nets" ng-if="ctrl.panel.rete_id === editor.nets[$index]" ng-init="i=$index" class="gf-form-group">
+            <h5 class="section-heading">Node List</h5>
+            <div ng-repeat="node in editor.nodes[i]" ng-init="j=$index" class="gf-form-inline">
+                <label class="gf-form-label min-width-10">{{node}}</label>
+                <div ng-repeat="state in editor.states_nodes[j]" ng-init="k=$index" class="gf-form">
+                    <div class="gf-form">
+                        <label class="gf-form-label min-width-10">{{state}}</label>
+                    </div>
+                    <div class="gf-form gf-form--right-margin">
+                        <!--<label class="gf-form-label min-width-10">{{editor.threshold_nodes[j][k]}}</label>-->
+                        <input class="gf-form-input width-4" type="number" ng-model="editor.threshold_nodes[j][k]">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

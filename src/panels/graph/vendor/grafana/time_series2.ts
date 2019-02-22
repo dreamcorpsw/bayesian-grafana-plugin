@@ -62,11 +62,6 @@ export function getDataMinMax(data: TimeSeries[]) {
   return { datamin, datamax };
 }
 
-export function getCurrent(data: TimeSeries[]) {
-  let array = data[0].getFlotPairs("null as zero");
-  return array[array.length-1][1]; //ritorno l'ultimo valore
-}
-
 export default class TimeSeries {
   datapoints: any;
   id: string;

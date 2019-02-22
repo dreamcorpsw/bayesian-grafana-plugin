@@ -10,7 +10,7 @@ import 'grafana/vendor/flot/jquery.flot.gauge.js';
 import 'grafana/vendor/flot/jquery.flot.pie.js';
 import './vendor/flot/jquery.flot.events';
 import { EventManager } from './vendor/grafana/event_manager';
-import { updateLegendValues, getCurrent } from './vendor/grafana/time_series2';
+import { updateLegendValues} from './vendor/grafana/time_series2';
 import { tickStep } from './vendor/grafana/ticks';
 
 import * as $ from 'jquery';
@@ -64,8 +64,6 @@ function graphDirective(timeSrv, popoverSrv, contextSrv) {
         if (!data) {
           return;
         }
-
-        console.info(getCurrent(data)); //mine
 
         annotations = ctrl.annotations || [];
         buildFlotPairs(data);

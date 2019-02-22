@@ -9,11 +9,9 @@ import config from 'grafana/app/core/config';
 import {alertTab, MetricsPanelCtrl} from 'grafana/app/plugins/sdk';
 import {DataProcessor} from './data_processor';
 import {axesEditorComponent} from './axes_editor';
-import {BayesianTab} from './bayesian_tab';
 
 class GraphCtrl extends MetricsPanelCtrl {
     static template = template;
-
     hiddenSeries: any = {};
     seriesList: any = [];
     dataList: any = [];
@@ -135,8 +133,6 @@ class GraphCtrl extends MetricsPanelCtrl {
         this.addEditorTab('Axes', axesEditorComponent, 2);
         this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 3);
         this.addEditorTab('Display', `${partialPath}/tab_display.html`, 4);
-        this.addEditorTab('Bayesian Network', BayesianTab, 6);
-
         if (config.alertingEnabled) {
             this.addEditorTab('Alert', alertTab, 5);
         }
@@ -327,6 +323,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     get panelPath() {
+        this.pluginId = "standard-graph";
         if (this._panelPath === undefined) {
             this._panelPath = '/public/plugins/' + this.pluginId + '/';
         }
@@ -334,5 +331,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 }
 
-export { GraphCtrl, GraphCtrl as PanelCtrl };
+export {GraphCtrl, GraphCtrl as PanelCtrl};
+
 

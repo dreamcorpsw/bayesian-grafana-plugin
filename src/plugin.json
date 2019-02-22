@@ -30,7 +30,15 @@
       "type": "panel",
       "name": "Bayesian Graph"
     },
-    { "type": "page", "name": "Add Bayesian Network", "component": "addNetCtrl", "role": "Editor", "addToNav": true,"defaultNav": true}
+    {
+      "type": "panel",
+      "name": "Standard Graph"
+    },
+    {
+      "type": "panel",
+      "name": "Net Status Panel"
+    },
+    { "type": "page", "name": "Add Bayesian Network", "component": "addNetCtrl", "role": "Editor", "addToNav": true}
   ],
 
   "dependencies": {

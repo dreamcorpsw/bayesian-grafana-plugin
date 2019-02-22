@@ -1,7 +1,7 @@
 {
   "type": "panel",
-  "name": "Bayesian Graph",
-  "id": "bayesian-graph",
+  "name": "Net Status Panel",
+  "id": "net-status-panel",
 
   "info": {
     "author": {
@@ -9,8 +9,8 @@
       "url": "\"https://github.com/DreamCorpSWE"
     },
     "logos": {
-      "small": "img/bayesian-graph.svg",
-      "large": "img/bayesian-graph.svg"
+      "small": "img/net-status.png",
+      "large": "img/net-status.png"
     }
   },
   "dependencies": {
