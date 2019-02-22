@@ -1,13 +1,16 @@
 import {getJsonAsText, path} from '../utils/utils.js';
+import locationUtil from '../utils/location_util';
 
 export class DreamCorpAppConfigCtrl{
 
   /** @ngInject */
-  constructor() {
+  constructor($scope,$injector,$location,backendSrv) {
+    this.$location = $location;
+    this.backendSrv = backendSrv;
     console.info("App instance");
     const my_url = path()+'/networks/rete.json';
     getJsonAsText(this,my_url);
-    this.startLoop();
+    //this.startLoop();
   }
 
   startLoop(){
@@ -112,12 +115,14 @@ export class DreamCorpAppConfigCtrl{
 
   }
   onUpload(dash) {
+    //this.createBN(dash);
+    //console.log(this.g);
     this.dash = 0;
     this.dash = dash;
-    this.dash.id = null;
-    this.step = 2;
-    this.inputs = [];
-
+    //this.dash.id = null;
+    //this.step = 2;
+    //this.inputs = [];
+    /*
     if (this.dash.__inputs) {
       for (const input of this.dash.__inputs) {
         const inputModel = {
@@ -138,19 +143,38 @@ export class DreamCorpAppConfigCtrl{
 
         this.inputs.push(inputModel);
       }
-    }
+    }*/
+
   }
 
   loadJsonText() {
     try {
       this.parseError = '';
+      this.createBN(this.jsonText);
+      //console.log(this.g);
       const dash = JSON.parse(this.jsonText);
       this.onUpload(dash);
+      this.saveDashboard();
     } catch (err) {
       console.log(err);
       this.parseError = err.message;
       return;
     }
+  }
+
+  saveDashboard() {
+    console.log("fun chiamata")
+
+    return this.backendSrv
+        .post('api/dashboards/import', {
+          dashboard: this.dash,
+          overwrite: true
+        })
+        .then(res => {
+          const dashUrl = locationUtil.stripBaseFromUrl("http://localhost:3000/plugins/dreamcorp-app/page/add-bayesian-network");
+          this.$location.url(dashUrl);
+          console.log("rete salvata")
+;        });
   }
 }
 

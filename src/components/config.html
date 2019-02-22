@@ -65,7 +65,7 @@
             <div class="gf-form-inline">
                 <div class="gf-form gf-form--grow">
                     <label class="gf-form-label width-15">Name</label>
-                    <input type="text" class="gf-form-input" ng-model="ctrl.dash.title" give-focus="true" ng-change="ctrl.titleChanged()" ng-class="{'validation-error': ctrl.nameExists || !ctrl.dash.title}">
+                    <input type="text" class="gf-form-input" ng-model="ctrl.dash.rete_id" give-focus="true" ng-change="ctrl.titleChanged()" ng-class="{'validation-error': ctrl.nameExists || !ctrl.dash.title}">
                     <label class="gf-form-label text-success" ng-if="ctrl.titleTouched && !ctrl.hasNameValidationError">
                         <i class="fa fa-check"></i>
                     </label>
@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            <div class="gf-form-inline">
+            <!-- <div class="gf-form-inline">
                 <div class="gf-form gf-form--grow">
                     <folder-picker  label-class="width-15"
                                     initial-folder-id="ctrl.folderId"
@@ -93,35 +93,17 @@
                                     enable-create-new="true">
                     </folder-picker>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="gf-form-inline">
-                <div class="gf-form gf-form--grow">
-          <span class="gf-form-label width-15">
-            Unique identifier (uid)
-            <info-popover mode="right-normal">
-                The unique identifier (uid) of a net can be used for uniquely identify a net between multiple Grafana bayesian nets.
-                The uid allows having consistent URL’s for accessing nets so changing the name of a net will not break any
-                bookmarked links to that net.
-            </info-popover>
-          </span>
-                    <input type="text" class="gf-form-input" disabled="disabled" ng-model="ctrl.autoGenerateUidValue" ng-if="ctrl.autoGenerateUid">
-                    <a class="btn btn-secondary gf-form-btn" href="#" ng-click="ctrl.autoGenerateUid = false" ng-if="ctrl.autoGenerateUid">change</a>
-                    <input type="text" class="gf-form-input" maxlength="40" placeholder="optional, will be auto-generated if empty" ng-model="ctrl.dash.uid" ng-change="ctrl.uidChanged()" ng-if="!ctrl.autoGenerateUid">
-                    <label class="gf-form-label text-success" ng-if="!ctrl.autoGenerateUid && !ctrl.hasUidValidationError">
-                        <i class="fa fa-check"></i>
-                    </label>
-                </div>
-            </div>
 
-            <div class="gf-form-inline" ng-if="ctrl.hasUidValidationError">
+            <!--<div class="gf-form-inline" ng-if="ctrl.hasUidValidationError">
                 <div class="gf-form offset-width-15 gf-form--grow">
                     <label class="gf-form-label text-warning gf-form-label--grow">
                         <i class="fa fa-warning"></i>
                         {{ctrl.uidValidationError}}
                     </label>
                 </div>
-            </div>
+            </div> PUò SERVIRMI PER VALIDARE IL JSON-->
 
             <div ng-repeat="input in ctrl.inputs">
                 <div class="gf-form">
