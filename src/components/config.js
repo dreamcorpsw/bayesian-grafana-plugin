@@ -111,7 +111,47 @@ export class DreamCorpAppConfigCtrl{
     }
 
   }
+  onUpload(dash) {
+    this.dash = 0;
+    this.dash = dash;
+    this.dash.id = null;
+    this.step = 2;
+    this.inputs = [];
 
+    if (this.dash.__inputs) {
+      for (const input of this.dash.__inputs) {
+        const inputModel = {
+          name: input.name,
+          label: input.label,
+          info: input.description,
+          value: input.value,
+          type: input.type,
+          pluginId: input.pluginId,
+          options: [],
+        };
+
+        if (input.type === 'datasource') {
+          this.setDatasourceOptions(input, inputModel);
+        } else if (!inputModel.info) {
+          inputModel.info = 'Specify a string constant';
+        }
+
+        this.inputs.push(inputModel);
+      }
+    }
+  }
+
+  loadJsonText() {
+    try {
+      this.parseError = '';
+      const dash = JSON.parse(this.jsonText);
+      this.onUpload(dash);
+    } catch (err) {
+      console.log(err);
+      this.parseError = err.message;
+      return;
+    }
+  }
 }
 
 DreamCorpAppConfigCtrl.templateUrl = 'components/config.html';

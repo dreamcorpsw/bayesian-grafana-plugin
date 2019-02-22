@@ -3,5 +3,6 @@ node_js:
 - "stable"
 cache: npm
 script:
+- npm run build
 - npm test
 - npm run coveralls

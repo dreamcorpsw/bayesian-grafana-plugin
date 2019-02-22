@@ -1,4 +1,4 @@
-<script src="../../../../../public/app/features/dashboard/dashboard_import_ctrl.ts"></script><h3 class="page-heading">DreamCorp App Configuration</h3>
+<script src="../../../../../public/app/features/dashboard/dashboard_import_ctrl.ts"></script><h3 class="page-heading">Import your Bayesian net</h3>
 <page-header model="ctrl.navModel"></page-header>
 
 <div class="page-container page-body" ng-cloak>
@@ -9,9 +9,9 @@
             <dash-upload on-upload="ctrl.onUpload(dash)"></dash-upload>
         </form>
 
-        <h5 class="section-heading">Grafana.com Dashboard</h5>
+        <!--<h5 class="section-heading">Grafana.com Dashboard</h5> -->
 
-        <div class="gf-form-group">
+        <!-- <div class="gf-form-group">
             <div class="gf-form gf-form--grow">
                 <input type="text" class="gf-form-input max-width-30" ng-model="ctrl.gnetUrl" placeholder="Paste Grafana.com dashboard url or id" ng-blur="ctrl.checkGnetDashboard()"></textarea>
             </div>
@@ -21,7 +21,7 @@
                     {{ctrl.gnetError}}
                 </label>
             </div>
-        </div>
+        </div> -->
 
         <h5 class="section-heading">Or paste JSON</h5>
 
