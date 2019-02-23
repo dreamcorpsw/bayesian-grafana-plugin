@@ -1,17 +1,16 @@
-<script src="../../../../../public/app/features/dashboard/dashboard_import_ctrl.ts"></script><h3 class="page-heading">Import your Bayesian net</h3>
-<page-header model="ctrl.navModel"></page-header>
+<!--<page-header model="ctrl.navModel"></page-header>-->
 
 <div class="page-container page-body" ng-cloak>
-    <div>
+    <div ng-if="ctrl.step === 1">
 
         <form class="page-action-bar">
             <div class="page-action-bar__spacer"></div>
             <dash-upload on-upload="ctrl.onUpload(dash)"></dash-upload>
         </form>
 
-        <!--<h5 class="section-heading">Grafana.com Dashboard</h5> -->
+        <h5 class="section-heading">Grafana.com Dashboard</h5>
 
-        <!-- <div class="gf-form-group">
+        <div class="gf-form-group">
             <div class="gf-form gf-form--grow">
                 <input type="text" class="gf-form-input max-width-30" ng-model="ctrl.gnetUrl" placeholder="Paste Grafana.com dashboard url or id" ng-blur="ctrl.checkGnetDashboard()"></textarea>
             </div>
@@ -21,7 +20,7 @@
                     {{ctrl.gnetError}}
                 </label>
             </div>
-        </div> -->
+        </div>
 
         <h5 class="section-heading">Or paste JSON</h5>
 
@@ -40,10 +39,10 @@
         </div>
     </div>
 
-    <div>
+    <div ng-if="ctrl.step === 2">
         <div class="gf-form-group" ng-if="ctrl.dash.gnetId">
             <h3 class="section-heading">
-                Importing Net Structure from
+                Importing Dashboard from
                 <a href="https://grafana.com/dashboards/{{ctrl.dash.gnetId}}" class="external-link" target="_blank">Grafana.com</a>
             </h3>
 
@@ -65,7 +64,7 @@
             <div class="gf-form-inline">
                 <div class="gf-form gf-form--grow">
                     <label class="gf-form-label width-15">Name</label>
-                    <input type="text" class="gf-form-input" ng-model="ctrl.dash.rete_id" give-focus="true" ng-change="ctrl.titleChanged()" ng-class="{'validation-error': ctrl.nameExists || !ctrl.dash.title}">
+                    <input type="text" class="gf-form-input" ng-model="ctrl.dash.title" give-focus="true" ng-change="ctrl.titleChanged()" ng-class="{'validation-error': ctrl.nameExists || !ctrl.dash.title}">
                     <label class="gf-form-label text-success" ng-if="ctrl.titleTouched && !ctrl.hasNameValidationError">
                         <i class="fa fa-check"></i>
                     </label>
@@ -81,7 +80,7 @@
                 </div>
             </div>
 
-            <!-- <div class="gf-form-inline">
+            <div class="gf-form-inline">
                 <div class="gf-form gf-form--grow">
                     <folder-picker  label-class="width-15"
                                     initial-folder-id="ctrl.folderId"
@@ -93,17 +92,35 @@
                                     enable-create-new="true">
                     </folder-picker>
                 </div>
-            </div> -->
+            </div>
 
+            <div class="gf-form-inline">
+                <div class="gf-form gf-form--grow">
+          <span class="gf-form-label width-15">
+            Unique identifier (uid)
+            <info-popover mode="right-normal">
+                The unique identifier (uid) of a dashboard can be used for uniquely identify a dashboard between multiple Grafana installs.
+                The uid allows having consistent URL’s for accessing dashboards so changing the title of a dashboard will not break any
+                bookmarked links to that dashboard.
+            </info-popover>
+          </span>
+                    <input type="text" class="gf-form-input" disabled="disabled" ng-model="ctrl.autoGenerateUidValue" ng-if="ctrl.autoGenerateUid">
+                    <a class="btn btn-secondary gf-form-btn" href="#" ng-click="ctrl.autoGenerateUid = false" ng-if="ctrl.autoGenerateUid">change</a>
+                    <input type="text" class="gf-form-input" maxlength="40" placeholder="optional, will be auto-generated if empty" ng-model="ctrl.dash.uid" ng-change="ctrl.uidChanged()" ng-if="!ctrl.autoGenerateUid">
+                    <label class="gf-form-label text-success" ng-if="!ctrl.autoGenerateUid && !ctrl.hasUidValidationError">
+                        <i class="fa fa-check"></i>
+                    </label>
+                </div>
+            </div>
 
-            <!--<div class="gf-form-inline" ng-if="ctrl.hasUidValidationError">
+            <div class="gf-form-inline" ng-if="ctrl.hasUidValidationError">
                 <div class="gf-form offset-width-15 gf-form--grow">
                     <label class="gf-form-label text-warning gf-form-label--grow">
                         <i class="fa fa-warning"></i>
                         {{ctrl.uidValidationError}}
                     </label>
                 </div>
-            </div> PUò SERVIRMI PER VALIDARE IL JSON-->
+            </div>
 
             <div ng-repeat="input in ctrl.inputs">
                 <div class="gf-form">
