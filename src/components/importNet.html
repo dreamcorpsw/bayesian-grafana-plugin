@@ -1,13 +1,25 @@
 <!--<page-header model="ctrl.navModel"></page-header>-->
 
 <div class="page-container page-body" ng-cloak>
+
+    <div class="page-header">
+        <h1>Import Bayesian Network</h1>
+        <br>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <h5>In this section you can import your json structure of the bayesian network. <br><br> Made possibile thanks to the determination of <strong>@trickpony69</strong>.</h5>
+            <br>
+        </div>
+    </div>
+
     <div ng-if="ctrl.step === 1">
 
         <form class="page-action-bar">
-            <div class="page-action-bar__spacer"></div>
             <dash-upload on-upload="ctrl.onUpload(dash)"></dash-upload>
         </form>
 
+        <!--
         <h5 class="section-heading">Grafana.com Dashboard</h5>
 
         <div class="gf-form-group">
@@ -21,12 +33,12 @@
                 </label>
             </div>
         </div>
-
+        -->
         <h5 class="section-heading">Or paste JSON</h5>
 
         <div class="gf-form-group">
             <div class="gf-form">
-                <textarea rows="10" data-share-panel-url="" class="gf-form-input" ng-model="ctrl.jsonText"></textarea>
+                <textarea rows="6" data-share-panel-url="" class="gf-form-input" ng-model="ctrl.jsonText"></textarea>
             </div>
             <button type="button" class="btn btn-secondary" ng-click="ctrl.loadJsonText()">
                 <i class="fa fa-paste"></i>
@@ -40,6 +52,8 @@
     </div>
 
     <div ng-if="ctrl.step === 2">
+
+        <!--
         <div class="gf-form-group" ng-if="ctrl.dash.gnetId">
             <h3 class="section-heading">
                 Importing Dashboard from
@@ -55,6 +69,7 @@
                 <label class="gf-form-label width-15">{{ctrl.gnetInfo.updatedAt | date : 'yyyy-MM-dd HH:mm:ss'}}</label>
             </div>
         </div>
+        -->
 
         <h3 class="section-heading">
             Options

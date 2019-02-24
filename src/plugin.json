@@ -38,7 +38,6 @@
       "type": "panel",
       "name": "Net Status Panel"
     },
-    { "type": "page", "name": "Add Bayesian Network", "component": "addNetCtrl", "role": "Editor", "addToNav": true},
     { "type": "page", "name": "Import Bayesian Network", "component": "ImportNetCtrl", "role": "Editor", "addToNav": true}
   ],
 

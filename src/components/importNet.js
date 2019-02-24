@@ -2,7 +2,8 @@ import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
 
-let structure2 = {
+//template struttura dashboard
+let structure = {
     __inputs: [],
     __requires: [
         {
@@ -91,7 +92,6 @@ export class ImportNetCtrl {
     
     /** @ngInject */
     constructor(backendSrv, validationSrv, navModelSrv, $location, $routeParams) {
-        //this.navModel = navModelSrv.getNav('create', 'import');
         this.backendSrv = backendSrv;
         this.validationSrv = validationSrv;
         this.$location = $location;
@@ -110,14 +110,14 @@ export class ImportNetCtrl {
             this.checkGnetDashboard();
         }
     }
-    
-    onUpload(dash) {
-        this.dash = dash;
+    //PERSONALIZZATA
+    onUpload(net) {
+        //riceverò sempre una net, gli devo aggiungere il template della dashboard
+        structure.network = net; //attacco il pezzo che ricevo al template
+        this.dash = structure; //gli do in pasto la struttura completa di dashboard + net
         this.dash.id = null;
         this.step = 2;
         this.inputs = [];
-
-        console.info("onUpload" + this.dash.network); //*****************************
         
         if (this.dash.__inputs) {
             for (const input of this.dash.__inputs) {
@@ -259,10 +259,11 @@ export class ImportNetCtrl {
             //const dbnet = structure+this.jsonText+"\n}";
             //const json = JSON.parse(dbnet);
             //this.onUpload(json);
-            console.info("pre parsing: " + structure2.panels[0].title);
-            structure2.network = JSON.parse(this.jsonText); //questo funziona quasi
-            console.info("post parsing: " + structure2.network.nodi[0].id); //commit
-            this.onUpload(structure2);
+            //console.info("pre parsing: " + structure2.panels[0].title);
+            //structure2.network = JSON.parse(this.jsonText); //questo funziona quasi
+            //console.info("post parsing: " + structure2.network.nodi[0].id); //commit
+            //this.onUpload(structure2);
+            this.onUpload(JSON.parse(this.jsonText)); //invio tutto quello che ricevo
             
         } catch (err) {
             console.log(err);
@@ -271,6 +272,7 @@ export class ImportNetCtrl {
         }
     }
     
+    /*
     checkGnetDashboard() {
         this.gnetError = '';
         
@@ -298,6 +300,7 @@ export class ImportNetCtrl {
                 this.gnetError = err.data.message || err;
             });
     }
+    */
     
     back() {
         this.gnetUrl = '';

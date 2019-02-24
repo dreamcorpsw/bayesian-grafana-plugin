@@ -25,6 +25,7 @@ class BayesianTabCtrl{
         return this.backendSrv.get('/api/search?tag=bayesian-network')
             .then(res =>{
                 this.uids = res;
+                console.info(this.uids);
             })
             .catch(err=>console.log(err));
     }
