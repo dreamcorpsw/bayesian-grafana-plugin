@@ -261,7 +261,7 @@ export class ImportNetCtrl {
             //this.onUpload(json);
             console.info("pre parsing: " + structure2.panels[0].title);
             structure2.network = JSON.parse(this.jsonText); //questo funziona quasi
-            console.info("post parsing: " + structure2.network.nodi[0].id);
+            console.info("post parsing: " + structure2.network.nodi[0].id); //commit
             this.onUpload(structure2);
             
         } catch (err) {
