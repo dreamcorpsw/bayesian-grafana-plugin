@@ -2,145 +2,61 @@ import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
 
-const structure = "{\n" +
-    "  \"__inputs\": [],\n" +
-    "  \"__requires\": [\n" +
-    "    {\n" +
-    "      \"type\": \"grafana\",\n" +
-    "      \"id\": \"grafana\",\n" +
-    "      \"name\": \"Grafana\",\n" +
-    "      \"version\": \"5.4.0\"\n" +
-    "    }\n" +
-    "  ],\n" +
-    "  \"annotations\": {\n" +
-    "    \"list\": [\n" +
-    "      {\n" +
-    "        \"builtIn\": 1,\n" +
-    "        \"datasource\": \"-- Grafana --\",\n" +
-    "        \"enable\": true,\n" +
-    "        \"hide\": true,\n" +
-    "        \"iconColor\": \"rgba(0, 211, 255, 1)\",\n" +
-    "        \"name\": \"Annotations & Alerts\",\n" +
-    "        \"type\": \"dashboard\"\n" +
-    "      }\n" +
-    "    ]\n" +
-    "  },\n" +
-    "  \"editable\": false,\n" +
-    "  \"gnetId\": null,\n" +
-    "  \"graphTooltip\": 0,\n" +
-    "  \"id\": null,\n" +
-    "  \"links\": [],\n" +
-    "  \"panels\": [\n" +
-    "    {\n" +
-    "      \"type\": \"text\",\n" +
-    "      \"title\": \"Warning from DreamCorp\",\n" +
-    "      \"gridPos\": {\n" +
-    "        \"x\": 4,\n" +
-    "        \"y\": 0,\n" +
-    "        \"w\": 16,\n" +
-    "        \"h\": 8\n" +
-    "      },\n" +
-    "      \"id\": 0,\n" +
-    "      \"mode\": \"markdown\",\n" +
-    "      \"content\": \"# This is a dashboard that include all the information about the net you imported. DO NOT enter edit mode because saving it would break our fecth data mechanism\"\n" +
-    "    }\n" +
-    "  ],\n" +
-    "  \"schemaVersion\": 16,\n" +
-    "  \"style\": \"dark\",\n" +
-    "  \"tags\": [\"bayesian-network\"],\n" +
-    "  \"templating\": {\n" +
-    "    \"list\": []\n" +
-    "  },\n" +
-    "  \"time\": {\n" +
-    "    \"from\": \"now-6h\",\n" +
-    "    \"to\": \"now\"\n" +
-    "  },\n" +
-    "  \"timepicker\": {\n" +
-    "    \"refresh_intervals\": [\n" +
-    "      \"5s\",\n" +
-    "      \"10s\",\n" +
-    "      \"30s\",\n" +
-    "      \"1m\",\n" +
-    "      \"5m\",\n" +
-    "      \"15m\",\n" +
-    "      \"30m\",\n" +
-    "      \"1h\",\n" +
-    "      \"2h\",\n" +
-    "      \"1d\"\n" +
-    "    ],\n" +
-    "    \"time_options\": [\n" +
-    "      \"5m\",\n" +
-    "      \"15m\",\n" +
-    "      \"1h\",\n" +
-    "      \"6h\",\n" +
-    "      \"12h\",\n" +
-    "      \"24h\",\n" +
-    "      \"2d\",\n" +
-    "      \"7d\",\n" +
-    "      \"30d\"\n" +
-    "    ]\n" +
-    "  },\n" +
-    "  \"timezone\": \"\",\n" +
-    "  \"title\": \"title example\",\n" +
-    "  \"uid\": \"super original uid\",\n" +
-    "  \"version\": 2,\n"+
-    "  \"network\": ";
-
-const structure2 = {
-    "__inputs": [],
-    "__requires": [
+let structure2 = {
+    __inputs: [],
+    __requires: [
         {
-            "type": "grafana",
-            "id": "grafana",
-            "name": "Grafana",
-            "version": "5.4.0"
+            type: "grafana",
+            id: "grafana",
+            name: "Grafana",
+            version: "5.4.0"
         }
     ],
-    "annotations": {
-        "list": [
+    annotations: {
+        list: [
             {
-                "builtIn": 1,
-                "datasource": "-- Grafana --",
-                "enable": true,
-                "hide": true,
-                "iconColor": "rgba(0, 211, 255, 1)",
-                "name": "Annotations & Alerts",
-                "type": "dashboard"
+                builtIn: 1,
+                datasource: "-- Grafana --",
+                enable: true,
+                hide: true,
+                iconColor: "rgba(0, 211, 255, 1)",
+                name: "Annotations & Alerts",
+                type: "dashboard"
             }
         ]
     },
-    "editable": false,
-    "gnetId": null,
-    "graphTooltip": 0,
-    "id": null,
-    "links": [],
-    "panels": [
+    editable: false,
+    gnetId: null,
+    graphTooltip: 0,
+    id: null,
+    links: [],
+    panels: [
         {
-            "type": "text",
-            "title": "Warning from DreamCorp",
-            "gridPos": {
-                "x": 4,
-                "y": 0,
-                "w": 16,
-                "h": 8
+            type: "text",
+            title: "Warning from DreamCorp",
+            gridPos: {
+                x: 4,
+                y: 0,
+                w: 16,
+                h: 8
             },
-            "id": 0,
-            "mode": "markdown",
-            "content": "# This is a dashboard that include all the information about the net you imported. DO NOT enter edit mode because saving it would break our fecth data mechanism"
+            id: 0,
+            mode: "markdown",
+            content: "# This is a dashboard that include all the information about the net you imported. DO NOT enter edit mode because saving it would break our fecth data mechanism"
         }
     ],
-    "schemaVersion": 16,
-    "style": "dark",
-    "tags": ["bayesian-network"],
-    "templating": {
-        "list": []
+    schemaVersion: 16,
+    style: "dark",
+    tags: ["bayesian-network"],
+    templating: {
+        list: []
     },
-    "time": {
-        "from": "now-6h",
-        "to": "now"
+    time: {
+        from: "now-6h",
+        to: "now"
     },
-    "timepicker": {
-        "refresh_intervals": [
+    timepicker: {
+        refresh_intervals: [
             "5s",
             "10s",
             "30s",
@@ -152,7 +68,7 @@ const structure2 = {
             "2h",
             "1d"
         ],
-        "time_options": [
+        time_options: [
             "5m",
             "15m",
             "1h",
@@ -164,11 +80,11 @@ const structure2 = {
             "30d"
         ]
     },
-    "timezone": "",
-    "title": "adasdasd",
-    "uid": "sdoasnronorf",
-    "version": 2,
-    "network": null
+    timezone: "",
+    title: "adasdasd",
+    uid: "sdoasnronorf",
+    version: 2,
+    network: null
 };
 
 export class ImportNetCtrl {
@@ -200,8 +116,8 @@ export class ImportNetCtrl {
         this.dash.id = null;
         this.step = 2;
         this.inputs = [];
-        
-        console.info(this.dash.network); //*****************************
+
+        console.info("onUpload" + this.dash.network); //*****************************
         
         if (this.dash.__inputs) {
             for (const input of this.dash.__inputs) {
@@ -343,8 +259,9 @@ export class ImportNetCtrl {
             //const dbnet = structure+this.jsonText+"\n}";
             //const json = JSON.parse(dbnet);
             //this.onUpload(json);
+            console.info("pre parsing: " + structure2.panels[0].title);
             structure2.network = JSON.parse(this.jsonText); //questo funziona quasi
-            console.info(structure2);
+            console.info("post parsing: " + structure2.network.nodi[0].id);
             this.onUpload(structure2);
             
         } catch (err) {
