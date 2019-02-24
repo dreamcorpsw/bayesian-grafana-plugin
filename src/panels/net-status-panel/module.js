@@ -3,12 +3,13 @@ import {MetricsPanelCtrl} from "grafana/app/plugins/sdk";
 const appCtrl = require('../../utils/appCtrl');
 export class netStatus extends MetricsPanelCtrl{
     /** @ngInject */
-    constructor($scope,$injector){
+    constructor($scope,$injector,backendSrv){
         super($scope,$injector);
         $scope.editor = this; //mi serve per collegare html e codice della classe
         this.panelCtrl = $scope.ctrl;
         this.panel = this.panelCtrl.panel; //collega codice della classe e html
         $scope.ctrl.panel.title = "Bayesian Network Status";
+        this.backendSrv = backendSrv;
         
         console.info("netStatus");
         //richiesta di una rete

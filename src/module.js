@@ -2,6 +2,7 @@ import './sass/grafana-zabbix.dark.scss';
 import './sass/grafana-zabbix.light.scss';
 
 import {DreamCorpAppConfigCtrl} from './components/config';
+import {ImportNetCtrl} from './components/importNet';
 import {loadPluginCss} from 'grafana/app/plugins/sdk';
 import {addNetCtrl} from "./components/addNetCtrl";
 
@@ -12,5 +13,5 @@ loadPluginCss({
 
 export {
     DreamCorpAppConfigCtrl as ConfigCtrl,
-    addNetCtrl
+    addNetCtrl, ImportNetCtrl
 };

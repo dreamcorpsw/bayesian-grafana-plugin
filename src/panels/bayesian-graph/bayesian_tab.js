@@ -1,33 +1,68 @@
-import {path, getJsonAsText} from '../../utils/utils';
+//import {path, getJsonAsText} from '../../utils/utils';
 import appCtrl from '../../utils/appCtrl';
-//const appCtrl = require('../../utils/appCtrl');
-class BayesianTabCtrl{
+const jsbayes = require('jsbayes');
 
+class BayesianTabCtrl{
     /** @ngInject */
     constructor($scope, backendSrv){
-
         //catturo un po' di variabili dallo scope
         $scope.editor = this; //mi serve per collegare html e codice della classe
         this.panelCtrl = $scope.ctrl;
         this.panel = this.panelCtrl.panel; //collega codice della classe e html
         this.backendSrv = backendSrv;
-        //struttura della rete in formato json
-        const my_url = path()+'/networks/rete.json';
-        //lancio la funzione asincrona che legge la rete come testo semplice
-        getJsonAsText(this,my_url);
+        
+        this.onInitData();
+        
+        //chiamate asincrone innestate per l'import della struttura della rete
+        this.searchNets()
+            .then(()=>this.importNets()
+                .then(()=>this.createBN())
+            );
+    }
+    
+    searchNets(){
+        //console.info("searchNets()");
+        return this.backendSrv.get('/api/search?tag=bayesian-network')
+            .then(res =>{
+                this.uids = res;
+            })
+            .catch(err=>console.log(err));
+    }
+    
+    //una rete alla volta, in modo asincrono
+    async importSingleNet(uid) {
+        return await this.backendSrv
+            .getDashboardByUid(uid)
+            .then(res => {
+                this.networks.push(res.dashboard.network);
+            })
+            .catch(err => {
+                err.isHandled = true;
+            });
+    }
+    
+    importNets() {
+        const promises = this.uids.map(uid => this.importSingleNet(uid.uid));
+        // loop version
+        /*
+        const promises = [];
+        for (let i=0;i<this.uids.length;i++){
+            console.info(this.uids[i].uid);
+            promises.push(this.importSingleNet(this.uids[i].uid));
+        }
+        */
+        return Promise.all(promises);
     }
     
     //crea la struttura logica della rete prendendo in input un file di testo
-    createBN(text) {
-        //console.info("createBN()");
-        var rete = JSON.parse(text);
-
-        const jsbayes = require('jsbayes');
+    createBN() {
+        console.info("createBN()");
+        
         this.g = jsbayes.newGraph();
-
-        //function to set the variables
-        this.onInitData();
-
+        
+        //invece di scegliere la prima, devo fare un ulteriore ciclo per distinguere le diverse reti
+        let rete = this.networks[0];
+        
         this.nets.push(rete.rete); //per ora un solo valore
 
         let i;
@@ -64,13 +99,17 @@ class BayesianTabCtrl{
 
         //random cpt
         this.g.reinit()
-            .then(function() {
-                //return this.g.sample(10000); //likelihood weight sampling aka the inference
-
-            });
+            .then(()=>{
+                /*
+                * do something chained to the promise returned
+                * */
+            })
+            .catch((err)=> console.info(err)); //catch for the errors
 
     }
     onInitData(){
+        this.networks=[];
+        this.uids = []; //per gli identificativi delle dashboard
         //console.info("onInitData()");
         //utilizzo degli array contenenti varie informazioni sulla rete che andrò a sfruttare durante l'esecuzione del programma
         this.nodi = [];

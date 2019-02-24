@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import config from 'grafana/app/core/config';
-import {getJsonAsText, path} from '../utils/utils.js';
 import locationUtil from '../utils/location_util';
 export class DreamCorpAppConfigCtrl {
 
@@ -31,6 +30,8 @@ export class DreamCorpAppConfigCtrl {
     this.dash.id = null;
     this.step = 2;
     this.inputs = [];
+    
+    console.info(this.dash.network); //*****************************
 
     if (this.dash.__inputs) {
       for (const input of this.dash.__inputs) {
@@ -169,6 +170,7 @@ export class DreamCorpAppConfigCtrl {
   loadJsonText() {
     try {
       this.parseError = '';
+      //** qui attacco la parte di json per definirla come dashboard e ingannare grafana
       const dash = JSON.parse(this.jsonText);
       this.onUpload(dash);
     } catch (err) {
@@ -213,6 +215,4 @@ export class DreamCorpAppConfigCtrl {
     this.gnetInfo = '';
   }
 }
-
-
 DreamCorpAppConfigCtrl.templateUrl = 'components/config.html';

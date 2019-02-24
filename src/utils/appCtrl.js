@@ -93,39 +93,33 @@ class AppCtrl extends EventEmitter{
         //ricorda se è già stato associato un nodo oppure no
         //this.associated = false;  //true: associato / false: non associato
     }
-    //funzione brutta
+    
+    //funzione brutta che andrà eseguita ogni qual volta ci sia la necessità di controllare il valore di un nodo
     getAlertData(panel,backendSrv,nodePos){
-        this.backendSrv = backendSrv;
-        //info for the http request
-        const payload = {
-            dashboard: "bayesian graph panel",
-            panelId: 0,
-        };
         //http request with API aiming at a specific panel
-        const panelUrl = '/api/alerts/?panelId='+panel;
-        
-        return this.backendSrv.get(panelUrl, payload).then(res => {
-            let alert_value = null;
-            console.info(res);
-            if(res === null) {
-                console.error("no result, bad request");
-            }
-            else {
-                if(res[0].evalData !== null){
-                    if(res[0].evalData.evalMatches !== null){
-                        alert_value = res[0].evalData.evalMatches[0].value;
-                        console.info("Valore Alert from appCtrl:" + alert_value);
-                        this.ThresholdToState(alert_value,nodePos); //mi cambia lo stato a quello che conta dettato dal valore dell'alert
-                    }
-                    else {
-                        console.error("evalMatches null");
-                    }
+        return backendSrv.get('/api/alerts/?panelId='+panel)
+            .then(res => {
+                let alert_value = null;
+                //faccio una serie di test per assicurarmi di non andare ad esplorare dati undefined
+                if(res === null) {
+                    console.log("no result, bad request");
                 }
                 else {
-                    console.error("evalData null");
+                    if (res.length === 0) console.info("no value from this alert");
+                    else {
+                        if (res[0].evalData !== null) {
+                            if (res[0].evalData.evalMatches !== null && res[0].evalData.evalMatches.length !== 0) {
+                                alert_value = res[0].evalData.evalMatches[0].value;
+                                if(alert_value !== null)
+                                    this.ThresholdToState(alert_value, nodePos);
+                            }
+                            else console.log("evalMatches null");
+                        }
+                        else console.log("evalData null");
+                    }
                 }
-            }
-        });
+            })
+            .catch(err => console.log(err));
     }
     ThresholdToState(value,nodePos){
         this.nodePos = nodePos;
