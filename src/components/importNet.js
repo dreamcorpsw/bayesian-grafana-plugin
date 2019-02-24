@@ -344,7 +344,7 @@ export class ImportNetCtrl {
             //const json = JSON.parse(dbnet);
             //this.onUpload(json);
             structure2.network = JSON.parse(this.jsonText); //questo funziona quasi
-            console.info(structure2);
+            console.info(structure2); //commit
             this.onUpload(structure2);
             
         } catch (err) {
