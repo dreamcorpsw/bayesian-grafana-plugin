@@ -1,5 +1,8 @@
 //import {path, getJsonAsText} from '../../utils/utils';
 import appCtrl from '../../utils/appCtrl';
+import locationUtil from "../../utils/location_util";
+import {NetParser} from "../../utils/net-parser";
+
 const jsbayes = require('jsbayes');
 
 class BayesianTabCtrl{
@@ -13,12 +16,54 @@ class BayesianTabCtrl{
         this.$location = $location;
         
         this.onInitData();
-        
+    
+        /*
         //chiamate asincrone innestate per l'import della struttura della rete
         this.searchNets()
             .then(()=>this.importNets()
                 .then(()=>this.createBN())
             );
+        */
+        
+        //chiamate asincrone innestate per l'import della struttura della rete
+        this.searchNets()
+            .then(()=>this.importNets()
+                .then(()=>console.info("done importing nets"))
+            );
+    }
+    
+    onInitData(){
+        this.networks=[];
+        this.dashboards=[];
+        this.uids = []; //per gli identificativi delle dashboard
+        //console.info("onInitData()");
+        //utilizzo degli array contenenti varie informazioni sulla rete che andrò a sfruttare durante l'esecuzione del programma
+        this.nodi = [];
+        
+        //variabili per i valori di presentazione a schermo dell'informazione
+        //this.nets = []; //nomi delle reti
+        //this.id_nodes = []; //id dei nodi
+        //this.nodes = []; //insieme dei nomi dei nodi di una rete
+        //this.states_nodes = []; //stati dei nodi
+        //this.threshold_nodes = []; //soglie dei nodi
+        this.samples = 10000; //numero di sampling da fare, il default, utilizzato anche da jsbayes, è 10k
+        
+        //variabili che memorizzano la posizione all'interno degli array precedenti che è stata scelta dall'utente a schermo
+        this.netPos = null; //indice della rete scelta
+        this.nodePos = null; //indice del nodo scelto
+        this.statePos = null; //indice dello stato scelto
+        this.thresholdPos = null; //indice della soglia scelta
+        
+        
+        //variabili grafiche che memorizzano il valore scelto dall'utente a schermo
+        this.panel.rete_id = null; //nome della rete scelta
+        this.panel.node_id = null; //nome del nodo scelto
+        this.panel.states_node_id = null; //nome dello stato scelto
+        this.panel.threshold_node_id = null; //valore della soglia scelta
+        this.panel.samples = 10000; //numero di sample scelto
+        
+        //ricorda se è già stato associato un nodo oppure no
+        this.associated = false;  //true: associato / false: non associato
     }
     
     searchNets(){
@@ -36,6 +81,7 @@ class BayesianTabCtrl{
         return await this.backendSrv
             .getDashboardByUid(uid)
             .then(res => {
+                this.dashboards.push(res.dashboard);
                 this.networks.push(res.dashboard.network);
             })
             .catch(err => {
@@ -43,21 +89,44 @@ class BayesianTabCtrl{
             });
     }
     
+    saveDashboard(index, nodo, value) {
+        //this.networks[0].nodi[nodo].id = value;
+        return this.backendSrv
+            .post('api/dashboards/import', {
+                dashboard: this.dashboards[index],
+                overwrite: true,
+                folderId: 0,
+            })
+            .then(()=>console.info("ok saved"))
+            .catch((err)=>console.info(err));
+    }
+    
     importNets() {
-        const promises = this.uids.map(uid => this.importSingleNet(uid.uid));
-        // loop version
-        /*
-        const promises = [];
-        for (let i=0;i<this.uids.length;i++){
-            console.info(this.uids[i].uid);
-            promises.push(this.importSingleNet(this.uids[i].uid));
-        }
-        */
+        this.dashboards = []; //reset
+        this.networks = []; //reset
+        const promises = this.uids.map(uid_container => this.importSingleNet(uid_container.uid));
         return Promise.all(promises);
     }
     
+    /*
+    setUpGraphics(){
+        let logic_nets = []; //contiene tutte le reti logiche
+        let graphic_nets = []; //contiene tutte le reti logiche
+        
+        let net_parsed;
+        
+        for(let network in this.networks){
+            net_parsed = new NetParser(network); //parsed
+            logic_nets.push(net_parsed.getLogicNet()); //logic structure: static
+            //graphic_nets.push(net_parsed.getGraphicNet()); //graphic structure: variable, repetitive requests
+        }
+    }
+    */
+    
     //crea la struttura logica della rete prendendo in input un file di testo
+    /*
     createBN() {
+        
         console.info("createBN()");
         
         this.g = jsbayes.newGraph();
@@ -102,45 +171,11 @@ class BayesianTabCtrl{
         //random cpt
         this.g.reinit()
             .then(()=>{
-                /*
-                * do something chained to the promise returned
-                * */
             })
             .catch((err)=> console.info(err)); //catch for the errors
-
+        
     }
-    onInitData(){
-        this.networks=[];
-        this.uids = []; //per gli identificativi delle dashboard
-        //console.info("onInitData()");
-        //utilizzo degli array contenenti varie informazioni sulla rete che andrò a sfruttare durante l'esecuzione del programma
-        this.nodi = [];
-
-        //variabili per i valori di presentazione a schermo dell'informazione
-        this.nets = []; //nomi delle reti
-        this.id_nodes = []; //id dei nodi
-        this.nodes = []; //insieme dei nomi dei nodi di una rete
-        this.states_nodes = []; //stati dei nodi
-        this.threshold_nodes = []; //soglie dei nodi
-        this.samples = 10000; //numero di sampling da fare, il default, utilizzato anche da jsbayes, è 10k
-
-        //variabili che memorizzano la posizione all'interno degli array precedenti che è stata scelta dall'utente a schermo
-        this.netPos = null; //indice della rete scelta
-        this.nodePos = null; //indice del nodo scelto
-        this.statePos = null; //indice dello stato scelto
-        this.thresholdPos = null; //indice della soglia scelta
-
-
-        //variabili grafiche che memorizzano il valore scelto dall'utente a schermo
-        this.panel.rete_id = null; //nome della rete scelta
-        this.panel.node_id = null; //nome del nodo scelto
-        this.panel.states_node_id = null; //nome dello stato scelto
-        this.panel.threshold_node_id = null; //valore della soglia scelta
-        this.panel.samples = 10000; //numero di sample scelto
-
-        //ricorda se è già stato associato un nodo oppure no
-        this.associated = false;  //true: associato / false: non associato
-    }
+    */
 
     /*
     * methods for settings values
@@ -149,8 +184,7 @@ class BayesianTabCtrl{
     setNet(net){
         //console.info("setNet()");
         if(net !== null) { //controllo che esista una rete
-            this.netPos = this.nets.indexOf(net); //ricerco la posizione della rete
-            //console.info(this.netPos);
+            this.netPos = this.networks.indexOf(net); //ricerco la posizione della rete
             this.nodePos = null;
             this.statePos = null;
             this.thresholdPos = null;
@@ -162,11 +196,10 @@ class BayesianTabCtrl{
         }
     }
     setNode(node){
-        //console.info("setNode()");
+        console.info("setNode()");
         if(this.netPos !== null && node !== null) {
-            this.nodePos = this.nodes[this.netPos].indexOf(node);
-            console.info("done");
-            //quando cambio il nodo deve farmi riscegliere da capo gli stati
+            this.nodePos = this.networks[this.netPos].nodi.indexOf(node);
+            //console.info("done");
         }
         else{
             this.nodePos = null;
@@ -176,11 +209,11 @@ class BayesianTabCtrl{
     setState(state){
         console.info("setState()");
         if(this.nodePos !== null && state !== null){
-            this.statePos = this.states_nodes[this.nodePos].indexOf(state);
-            console.info("done");
+            this.statePos = this.networks[this.netPos].nodi[this.nodePos].stati.indexOf(state);
+            //console.info("done");
             this.thresholdPos = this.statePos;
-            this.threshold = this.threshold_nodes[this.nodePos][this.thresholdPos];
-            this.setThreshold(this.threshold); //fake chiamata
+            this.threshold = this.networks[this.netPos].nodi[this.nodePos].soglie[this.thresholdPos];
+            this.setThreshold(this.threshold, this.thresholdPos); //fake chiamata
         }
         else{
             this.statePos = null;
@@ -188,13 +221,13 @@ class BayesianTabCtrl{
             console.error("Impossible to set state");
         }
     }
-    setThreshold(threshold){
+    setThreshold(threshold, index){
         //qui modifico le soglie anche nel JSON originale
         console.info("setThreshold()");
         if(this.nodePos !== null && threshold !== null){
-            this.threshold = threshold;
+            this.networks[this.netPos].nodi[this.nodePos].soglie[index] = threshold; //effective changes
             console.info("threshold set to: "+threshold);
-            console.info("done");
+            //console.info("done");
         }
         else {
             console.error("Impossible to set threshold");
@@ -234,6 +267,7 @@ class BayesianTabCtrl{
         this.nodeId = NodeId;
         appCtrl.emit('associate', this.nodeId, this.nodePos, this.panel.id, this.backendSrv);
         this.associated = true;
+        this.saveDashboard(0,this.nodePos,"cambio nome");
         
         //launch an event to AppCtrl
         //this.startLoop();

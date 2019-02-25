@@ -3,8 +3,12 @@ const jsbayes = require('jsbayes');
 export class NetParser{
     constructor(jsonNet){
         console.info("NetParser()");
-        if(jsonNet !== null) //not empty json
-            this.parse(jsonNet);
+        this.jsonNet = jsonNet;
+        this.logicNet = null;
+        this.g = null;
+        this.hasErrors = false;
+        console.info(jsonNet);
+        this.parse(jsonNet);
     }
     
     //find a parent index for a node
@@ -39,7 +43,7 @@ export class NetParser{
     
     //adding nodes and relative parents
     parse(jsonNet) {
-    
+        
         //new Bayesian Net
         this.g = jsbayes.newGraph();
         
@@ -47,6 +51,8 @@ export class NetParser{
         let i, j;
         let nodes = []; //array di nodi ritornati dalla creazione di nodi con jsbayes, serve per collegare ai padri successivamente
         this.hasErrors = false; //check for future
+        
+        //to be done: check for structure pattern
         
         //addNode
         for (i = 0; i < jsonNet.nodi.length; i++) {
@@ -80,7 +86,7 @@ export class NetParser{
     
             //set random cpt
             if (!this.hasErrors)
-                this.setRandomCpt()
+                return this.setRandomCpt()
                     .catch((err)=> console.info(err));
         }
     }
@@ -88,18 +94,30 @@ export class NetParser{
     //set random conditional probability tables
     setRandomCpt(){
         return this.g.reinit()
+            .then(()=>this.g.sample(10000)
+                .then(()=> {
+                    return this.g
+                })
+            ) //sampling to fix probabilities in the nodes
             .catch((err)=> console.info(err)); //catch for the errors
     }
     
     //returns the net if there are no errors, returns null instead
-    getNet(){
-        if(!this.hasErrors)
-            return this.g;
-        else{
-            console.info("hasError => returning null");
-            return null;
+    getLogicNet(){
+        if(this.logicNet) return this.logicNet; //if already exists, return it
+        if(this.jsonNet !== null){ //not empty json
+            return this.parse(this.jsonNet)
+                .then(()=>{
+                    if(!this.hasErrors)
+                        return this.g;
+                    else{
+                        console.info("hasErrors => returning null");
+                        return null;
+                    }
+                })
+                .catch((err)=>console.info(err));
         }
-        
+        else return null;
     }
 }
 

@@ -12,24 +12,65 @@ export class netStatus extends MetricsPanelCtrl{
         this.backendSrv = backendSrv;
         
         console.info("netStatus");
-        //richiesta di una rete
+        /*//richiesta di una rete
         this.net = appCtrl.getNet();
         this.createBN();
+        */
+        this.onInitData();
+    
+        //chiamate asincrone innestate per l'import della struttura della rete
+        this.searchNets()
+            .then(()=>this.importNets()
+                .then(()=>this.createBN())
+            );
         
     }
+    searchNets(){
+        //console.info("searchNets()");
+        return this.backendSrv.get('/api/search?tag=bayesian-network')
+            .then(res =>{
+                this.uids = res;
+                console.info(this.uids);
+            })
+            .catch(err=>console.log(err));
+    }
+    
+    //una rete alla volta, in modo asincrono
+    async importSingleNet(uid) {
+        return await this.backendSrv
+            .getDashboardByUid(uid)
+            .then(res => {
+                this.networks.push(res.dashboard.network);
+            })
+            .catch(err => {
+                err.isHandled = true;
+            });
+    }
+    
+    importNets() {
+        const promises = this.uids.map(uid => this.importSingleNet(uid.uid));
+        // loop version
+        /*
+        const promises = [];
+        for (let i=0;i<this.uids.length;i++){
+            console.info(this.uids[i].uid);
+            promises.push(this.importSingleNet(this.uids[i].uid));
+        }
+        */
+        return Promise.all(promises);
+    }
+    
     init() {
         this.net = appCtrl.getNet();
         this.createBN();
     }
     
     createBN() {
-        var rete = this.net;
         
         const jsbayes = require('jsbayes');
         this.g = jsbayes.newGraph();
-        
-        //function to set the variables
-        this.onInitData();
+    
+        let rete = this.networks[0]; //scelgo sempre la prima
         
         this.nets.push(rete.rete); //per ora un solo valore
         
@@ -76,6 +117,8 @@ export class netStatus extends MetricsPanelCtrl{
     }
     
     onInitData(){
+        this.networks=[];
+        this.uids = []; //per gli identificativi delle dashboard
         //utilizzo degli array contenenti varie informazioni sulla rete che andrò a sfruttare durante l'esecuzione del programma
         this.nodi = []; //array di variabili di nodi logici di jsbayes (qui dentro inserisco quello che ritorna la funzione g.addNode(nome, stati))
         
