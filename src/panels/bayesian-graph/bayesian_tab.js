@@ -17,6 +17,7 @@ class BayesianTabCtrl{
         
         this.onInitData();
     
+        
         /*
         //chiamate asincrone innestate per l'import della struttura della rete
         this.searchNets()
@@ -25,7 +26,7 @@ class BayesianTabCtrl{
             );
         */
         
-        //chiamate asincrone innestate per l'import della struttura della rete
+        
         this.searchNets()
             .then(()=>this.importNets()
                 .then(()=>console.info("done importing nets"))
