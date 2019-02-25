@@ -2,16 +2,17 @@
     <!-- Configuration -->
     <div class="section gf-form-group" ng-if="editor.networks[0]">
         <h5 class="section-heading">Bayesian Network List</h5>
-        <div class="gf-form" >
-            <span class="gf-form-label width-10">Bayesian Network:</span>
-            <div class="gf-form-select-wrapper width-8">
+        <div class="gf-form">
+            <span class="gf-form-label width-10">Network:</span>
+            <div class="gf-form-select-wrapper width-15">
                 <select class="gf-form-input" ng-init="ctrl.panel.rete_id = editor.networks[0]" ng-model="ctrl.panel.rete_id" ng-options="t.rete for t in editor.networks"></select>
             </div>
         </div>
         <div ng-repeat="net in editor.networks" ng-if="ctrl.panel.rete_id === editor.networks[$index]" ng-init="i=$index" class="gf-form-group">
-            <h5 class="section-heading">Node List</h5>
-            <div ng-repeat="node in editor.networks[i].nodi" ng-init="j=$index" class="gf-form-inline">
-                <label class="gf-form-label min-width-10">{{node.id}}</label>
+            <h5 class="page-heading">Nodes:</h5>
+            <div ng-repeat="node in editor.networks[i].nodi" ng-init="j=$index" class="gf-form">
+                <!--<label class="gf-form-label min-width-10">{{node.id}}</label>-->
+                <button class="btn btn-primary btn-small">{{node.id}}</button>
                 <div ng-repeat="state in editor.networks[i].nodi[j].stati" ng-init="k=$index" class="gf-form">
                     <div class="gf-form">
                         <label class="gf-form-label min-width-10">{{state}}</label>

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
+const appCtrl = require('../utils/appCtrl');
 
 //template struttura dashboard
 let structure = {
@@ -105,9 +106,9 @@ let structure = {
         ]
     },
     timezone: "",
-    title: "adasdasd",
-    uid: "sdoasnronorf",
-    version: 2,
+    title: "Rete Bayesiana",
+    uid: "H39FJ39VMA12MD",
+    version: 3,
     network: null
 };
 
@@ -133,10 +134,22 @@ export class ImportNetCtrl {
             this.checkGnetDashboard();
         }
     }
+    
+    static initProbs(net){
+        let prob_nodes = appCtrl.getProbs(); //replace di appCtrl con netParser ==> ci sono anche i controlli di integrità
+        for(let i=0;i<prob_nodes.length;i++)
+            net.nodi[i].probs = prob_nodes[i]; //aggiungo le probabiltà
+    }
+    
     //PERSONALIZZATA
     onUpload(net) {
+        this.network = net; //per l'html
         //riceverò sempre una net, gli devo aggiungere il template della dashboard
+        ImportNetCtrl.initProbs(net);
+        structure.title = net.rete;
         structure.network = net; //attacco il pezzo che ricevo al template
+        console.info("onUpload Rete: ");
+        console.info(structure.network);
         this.dash = structure; //gli do in pasto la struttura completa di dashboard + net
         this.dash.id = null;
         this.step = 2;
@@ -279,13 +292,6 @@ export class ImportNetCtrl {
     loadJsonText() {
         try {
             this.parseError = '';
-            //const dbnet = structure+this.jsonText+"\n}";
-            //const json = JSON.parse(dbnet);
-            //this.onUpload(json);
-            //console.info("pre parsing: " + structure2.panels[0].title);
-            //structure2.network = JSON.parse(this.jsonText); //questo funziona quasi
-            //console.info("post parsing: " + structure2.network.nodi[0].id); //commit
-            //this.onUpload(structure2);
             this.onUpload(JSON.parse(this.jsonText)); //invio tutto quello che ricevo
             
         } catch (err) {

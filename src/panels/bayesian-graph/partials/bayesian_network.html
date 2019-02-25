@@ -5,7 +5,7 @@
 
         <div class="gf-form" >
             <span class="gf-form-label width-10">Bayesian Network:</span>
-            <div class="gf-form-select-wrapper width-8">
+            <div class="gf-form-select-wrapper min-width-10">
                 <select  class="gf-form-input" ng-model="ctrl.panel.rete_id" ng-options="rete.rete for rete in editor.networks" ng-change="editor.setNet(ctrl.panel.rete_id)"></select>
             </div>
         </div>
@@ -58,8 +58,8 @@
     <div class="section gf-form-group"ng-if="ctrl.panel.node_id && !editor.associated">
         <h5 class="section-heading">Saving</h5>
         <div class="gf-form">
-          <button class="btn btn-inverse btn-success" ng-click="editor.save(editor.netPos)">
-            Save
+          <button class="btn btn-success width-6" ng-click="editor.save(editor.netPos)">
+              <i class="fa fa-save"></i> Save
           </button>
         </div>
     </div>

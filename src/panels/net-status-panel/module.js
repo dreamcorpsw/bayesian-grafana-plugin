@@ -12,19 +12,17 @@ export class netStatus extends MetricsPanelCtrl{
         this.backendSrv = backendSrv;
         
         console.info("netStatus");
-        /*//richiesta di una rete
-        this.net = appCtrl.getNet();
-        this.createBN();
-        */
+        
         this.onInitData();
     
         //chiamate asincrone innestate per l'import della struttura della rete
         this.searchNets()
             .then(()=>this.importNets()
-                .then(()=>this.createBN())
+                .catch((err)=>console.info(err))
             );
         
     }
+    
     searchNets(){
         //console.info("searchNets()");
         return this.backendSrv.get('/api/search?tag=bayesian-network')
@@ -48,22 +46,16 @@ export class netStatus extends MetricsPanelCtrl{
     }
     
     importNets() {
+        this.networks = []; //reset
         const promises = this.uids.map(uid => this.importSingleNet(uid.uid));
-        // loop version
-        /*
-        const promises = [];
-        for (let i=0;i<this.uids.length;i++){
-            console.info(this.uids[i].uid);
-            promises.push(this.importSingleNet(this.uids[i].uid));
-        }
-        */
         return Promise.all(promises);
     }
     
+    /*
     init() {
         this.net = appCtrl.getNet();
         this.createBN();
-    }
+    }*/
     
     createBN() {
         
@@ -140,9 +132,6 @@ export class netStatus extends MetricsPanelCtrl{
         //ricorda se è già stato associato un nodo oppure no
         //this.associated = false;  //true: associato / false: non associato
         this.probability_ready = false;
-    }
-    test(data){
-        console.info(data);
     }
 }
 
