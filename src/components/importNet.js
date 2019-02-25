@@ -50,7 +50,30 @@ let structure = {
     style: "dark",
     tags: ["bayesian-network"],
     templating: {
-        list: []
+        list: [
+            {
+                allValue: null,
+                current: {
+                    text: "nodo 1",
+                    value: "nodo 1"
+                },
+                hide: 0,
+                includeAll: false,
+                label: "Nodo",
+                multi: false,
+                name: "Nodo",
+                options: [
+                    {
+                        selected: true,
+                        text: "nodo 1",
+                        value: "nodo 1"
+                    }
+                ],
+                query: "nodo 1",
+                skipUrlSync: false,
+                type: "custom"
+            }
+        ]
     },
     time: {
         from: "now-6h",

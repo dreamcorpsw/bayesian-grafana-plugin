@@ -4,12 +4,13 @@ const jsbayes = require('jsbayes');
 
 class BayesianTabCtrl{
     /** @ngInject */
-    constructor($scope, backendSrv){
+    constructor($scope, backendSrv, $location){
         //catturo un po' di variabili dallo scope
         $scope.editor = this; //mi serve per collegare html e codice della classe
         this.panelCtrl = $scope.ctrl;
         this.panel = this.panelCtrl.panel; //collega codice della classe e html
         this.backendSrv = backendSrv;
+        this.$location = $location;
         
         this.onInitData();
         

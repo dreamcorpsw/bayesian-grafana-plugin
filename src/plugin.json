@@ -38,6 +38,10 @@
       "type": "panel",
       "name": "Net Status Panel"
     },
+    {
+      "type": "datasource",
+      "name": "DreamCorpJson"
+    },
     { "type": "page", "name": "Import Bayesian Network", "component": "ImportNetCtrl", "role": "Editor", "addToNav": true}
   ],
 

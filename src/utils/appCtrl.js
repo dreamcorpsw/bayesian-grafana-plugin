@@ -1,13 +1,20 @@
+import {ImportNetCtrl} from "../components/importNet";
+
 const EventEmitter = require('eventemitter3');
 import {path, getJsonAsText} from './utils';
 //classe di gestione dell'applicazione per eventi e dati condivisi
 class AppCtrl extends EventEmitter{
-    constructor(){
+    /** @ngInject */
+    constructor($scope,backendSrv){
         super();
+        this.backendSrv = backendSrv;
         this.i = 0;
         console.info("new AppCtrl");
+        //console.info("backendSrv");
+        //console.info(this.backendSrv);
         this.getNet();
     }
+    
     test(){
         console.info(this.i++);
     }
@@ -169,6 +176,7 @@ class AppCtrl extends EventEmitter{
     }
     
 }
+//AppCtrl.templateUrl = 'appCtrl.html'; //maybe non serve per passare backendSrv
 
 //istanza
 const appCtrl = new AppCtrl();

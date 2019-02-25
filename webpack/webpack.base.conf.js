@@ -19,7 +19,8 @@ module.exports = {
     'components/config': './components/config.js',
     'panels/graph/module': './panels/graph/module.ts',
     'panels/bayesian-graph/module': './panels/bayesian-graph/module.js',
-    'panels/net-status-panel/module': './panels/net-status-panel/module.js'
+    'panels/net-status-panel/module': './panels/net-status-panel/module.js',
+    'datasource/module': './datasource/module.js',
   },
   output: {
     filename: "[name].js",
