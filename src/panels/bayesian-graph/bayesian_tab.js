@@ -90,15 +90,16 @@ class BayesianTabCtrl{
             });
     }
     
-    saveDashboard(index, nodo, value) {
-        //this.networks[0].nodi[nodo].id = value;
+    save(index) {
+        //need for check integrity of the net
+        //
         return this.backendSrv
             .post('api/dashboards/import', {
                 dashboard: this.dashboards[index],
                 overwrite: true,
                 folderId: 0,
             })
-            .then(()=>console.info("ok saved"))
+            .then(()=>console.info("saved"))
             .catch((err)=>console.info(err));
     }
     
@@ -224,7 +225,7 @@ class BayesianTabCtrl{
     }
     setThreshold(threshold, index){
         //qui modifico le soglie anche nel JSON originale
-        console.info("setThreshold()");
+        console.info("setThreshold() of index "+index);
         if(this.nodePos !== null && threshold !== null){
             this.networks[this.netPos].nodi[this.nodePos].soglie[index] = threshold; //effective changes
             console.info("threshold set to: "+threshold);
@@ -268,7 +269,6 @@ class BayesianTabCtrl{
         this.nodeId = NodeId;
         appCtrl.emit('associate', this.nodeId, this.nodePos, this.panel.id, this.backendSrv);
         this.associated = true;
-        this.saveDashboard(0,this.nodePos,"cambio nome");
         
         //launch an event to AppCtrl
         //this.startLoop();
