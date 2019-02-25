@@ -5,7 +5,7 @@
         <div class="gf-form" >
             <span class="gf-form-label width-10">Bayesian Network:</span>
             <div class="gf-form-select-wrapper width-8">
-                <select  class="gf-form-input" ng-init="ctrl.panel.rete_id=editor.nets[0]" ng-model="ctrl.panel.rete_id" ng-options="t for t in editor.nets"></select>
+                <select class="gf-form-input" ng-init="ctrl.panel.rete_id=editor.nets[0]" ng-model="ctrl.panel.rete_id" ng-options="t for t in editor.nets"></select>
             </div>
         </div>
         <div ng-repeat="net in editor.nets" ng-if="ctrl.panel.rete_id === editor.nets[$index]" ng-init="i=$index" class="gf-form-group">

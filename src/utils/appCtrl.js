@@ -196,6 +196,5 @@ appCtrl.on('net-request',function () {
     }
 );
 
-
 //export this instance
 module.exports = appCtrl;
