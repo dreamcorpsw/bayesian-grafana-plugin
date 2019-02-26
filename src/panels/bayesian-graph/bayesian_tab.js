@@ -266,36 +266,22 @@ class BayesianTabCtrl{
     */
 
     associate(NodeId){
-        this.nodeId = NodeId;
-        appCtrl.emit('associate', this.nodeId, this.nodePos, this.panel.id, this.backendSrv);
+        appCtrl.emit('associate', NodeId, this.nodePos, this.panel.id, this.backendSrv);
         this.associated = true;
-        
-        //launch an event to AppCtrl
-        //this.startLoop();
-        //setto a true la variabile che ricorda se è già stato associato il nodo
-        
-        //decido lo stato del nodo guardando il valore preso dall'alert
-        //this.getAlertingStuff();
+        //modifico il valore del panel associato con l'id di questo panel
+        this.networks[this.netPos].nodi[this.nodePos].panel = this.panel.id;
+        //lancio la save
+        this.save(this.netPos);
     }
     dissociate(NodeId){
-        //console.info("Dissociated with "+NodeId);
-        //alert("Dissociated with " +NodeId);
-        //fa la stessa cosa di "associate"
-        this.associated = false;
-        //invece di osservare un nodo, lo "inosservo", cioè reinserisco l'incertezza
         appCtrl.emit('dissociate', NodeId, this.nodePos);
-
-        //this.showProb();
+        this.associated = false;
+        //modifico il valore del panel associato a null
+        this.networks[this.netPos].nodi[this.nodePos].panel = null;
+        //lancio la save
+        this.save(this.netPos);
     }
-    /*
-    showProb(){
-        //output probabilità
-        for (let x = 0;x<this.nodi.length;x++){
-            console.info(this.nodi[x].probs());
-        }
-
-    }
-    */
+    
     /*
     getAlertingStuff(){
         //questa funzione è da sistemare di brutto, funziona a colpi di fortuna per ora

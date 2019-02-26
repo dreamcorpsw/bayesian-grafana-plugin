@@ -3,6 +3,8 @@ import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
 const appCtrl = require('../utils/appCtrl');
 
+
+
 //template struttura dashboard
 let structure = {
     __inputs: [],

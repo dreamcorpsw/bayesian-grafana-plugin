@@ -7,7 +7,8 @@
       "soglie":[10,20,30],
       "parents":["nodo 2"],
       "cpt": [],
-      "probs": []
+      "probs": [],
+      "panel":null
     },
     {
       "id":"nodo 2",
@@ -15,7 +16,8 @@
       "soglie":[20,40],
       "parents":["nodo 3"],
       "cpt": [],
-      "probs": []
+      "probs": [],
+      "panel":null
     },
     {
       "id":"nodo 3",
@@ -23,7 +25,8 @@
       "soglie":[30,60],
       "parents":null,
       "cpt": [],
-      "probs": []
+      "probs": [],
+      "panel":null
     },
     {
       "id":"nodo 4",
@@ -31,7 +34,8 @@
       "soglie":[12,25,33],
       "parents":null,
       "cpt": [],
-      "probs": []
+      "probs": [],
+      "panel":null
     },
     {
       "id":"nodo 5",
@@ -39,7 +43,8 @@
       "soglie":[21,69,80,140],
       "parents":["nodo 4"],
       "cpt": [],
-      "probs": []
+      "probs": [],
+      "panel":null
     },
     {
       "id":"nodo 6",
@@ -47,7 +52,8 @@
       "soglie":[12,20,40,60,90,145,150],
       "parents":["nodo 3","nodo 5"],
       "cpt": [],
-      "probs": []
+      "probs": [],
+      "panel":null
     }
   ]
 }

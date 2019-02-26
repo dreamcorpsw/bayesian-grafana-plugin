@@ -30,7 +30,7 @@ module.exports = {
   externals: [
     // remove the line below if you don't want to use builtin versions
     'jquery', 'lodash', 'moment', 'angular',
-    'react', 'react-dom',
+    'react', 'react-dom','influxdb-nodejs',
     function (context, request, callback) {
       var prefix = 'grafana/';
       if (request.indexOf(prefix) === 0) {
