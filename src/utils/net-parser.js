@@ -40,9 +40,25 @@ export class NetParser{
         return ((node.stati.length === node.soglie.length) && NetParser.ascendingOrder(node.soglie));
         //numero di stati e soglie uguale e poi che le soglie siano in ordine crescente
     }
+
+
+    controlNameNodes(jsonNet){
+        for(let i = 0; i < jsonNet.nodi.length; i++){
+            for(let j = 0; j < jsonNet.nodi.length; j++){
+                if(j!=i && jsonNet.nodi[i].id===jsonNet.nodi[j].id){
+                    console.info("Duplicate id between node n°" + i + " and node n°" + j + " with id="+jsonNet.nodi[j].id);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     
     //adding nodes and relative parents
     parse(jsonNet) {
+
+
         
         //new Bayesian Net
         this.g = jsbayes.newGraph();
@@ -50,14 +66,14 @@ export class NetParser{
         //init vars
         let i, j;
         let nodes = []; //array di nodi ritornati dalla creazione di nodi con jsbayes, serve per collegare ai padri successivamente
-        this.hasErrors = false; //check for future
+        this.hasErrors = this.controlNameNodes(jsonNet);; //check for future
         
         //to be done: check for structure pattern
         
         //addNode
         for (i = 0; i < jsonNet.nodi.length; i++) {
             if(NetParser.isOk(jsonNet.nodi[i])){
-                nodes.push(this.g.addNode(jsonNet.nodi[i].id, jsonNet.nodi[i].stati)); //nuovo nodo logico della rete bayesiana
+                nodes.push(this.g.addNode(jsonNet.nodi[i].id, jsonNet.nodi[i].stati)); //aggiungo un nuovo nodo logico della rete bayesiana al graph
                 //nodes[i].setCpt(jsonNet.nodi[i].cpt); //setting the cpt *********************** STILL MISSING VALUES
             }
             else this.hasErrors = true; //stop for the future, but not the cycle
