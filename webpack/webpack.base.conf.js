@@ -11,6 +11,8 @@ function resolve(dir) {
   return path.join(__dirname, '..', dir);
 }
 
+const http = path.resolve(__dirname, 'node_modules/stream-http/index.js');
+
 module.exports = {
   target: 'node',
   context: resolve('src'),
@@ -30,7 +32,7 @@ module.exports = {
   externals: [
     // remove the line below if you don't want to use builtin versions
     'jquery', 'lodash', 'moment', 'angular',
-    'react', 'react-dom','influxdb-nodejs',
+    'react', 'react-dom',
     function (context, request, callback) {
       var prefix = 'grafana/';
       if (request.indexOf(prefix) === 0) {
@@ -56,7 +58,8 @@ module.exports = {
     ExtractTextPluginDark,
   ],
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".html", ".scss"]
+    extensions: [".js", ".ts", ".tsx", ".html", ".scss"],
+    alias: { http, https: http }
   },
   module: {
     rules: [

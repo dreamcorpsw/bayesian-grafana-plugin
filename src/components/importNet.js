@@ -2,6 +2,57 @@ import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
 const appCtrl = require('../utils/appCtrl');
+const Influx = require('../utils/Influx');
+import * as $ from 'jquery';
+
+//const url = "http://localhost:8086/query?db=mydb&q=SELECT+value,region+FROM+cpu+WHERE+value=0.64" ;
+//const url = "http://localhost:8086/query?q=CREATE+DATABASE+dataaaa" ;
+/*
+const url = "http://localhost:8086/wirte?q=CREATE+DATABASE+dataaaa" ;
+const urlI = "http://localhost:8086/db/mydb/series?";
+const body = {
+    db:"mydb",
+    name:"foo",
+    columns:["col"],
+    points:[[23]]
+};
+const dataI = "cpu,host='serverA',region='us_west'+value=0.64" ;
+const urlS = "http://localhost:8086/query?db=mydb/";
+const dataS = "q=SELECT+value,region+FROM+cpu+WHERE+value=0.64" ;
+
+$.ajax({
+    url: "http://localhost:8086/query?db=mydb",
+    headers:{
+        'Authorization': 'Basic ' + btoa('admin:admin'),
+    },
+    type: 'POST',
+    data: {
+        q:"SELECT+value,region+FROM+cpu+WHERE+value=0.64",
+    },
+    success: function(data) { //we got the response
+        console.log(data);
+    },
+    error: function(test, status, exception) {
+        console.log("Error: " + exception);
+    }
+});
+
+/*
+let query = 'cpu,host=serverA,region=new value=69';
+$.ajax({
+    url:'http://localhost:8086/write?db=mydb',
+    type:'POST',
+    contentType:'application/octet-stream',
+    data: query,
+    processData: false,
+    success: function (data) {
+        console.info(data);
+    },
+    error: function(test, status, exception) {
+        console.log("Error: " + exception);
+    }
+}); */
+
 
 
 
@@ -135,6 +186,7 @@ export class ImportNetCtrl {
             this.gnetUrl = $routeParams.gnetId;
             this.checkGnetDashboard();
         }
+        
     }
     
     static initProbs(net){
@@ -152,6 +204,38 @@ export class ImportNetCtrl {
         structure.network = net; //attacco il pezzo che ricevo al template
         console.info("onUpload Rete: ");
         console.info(structure.network);
+        
+        //creating a db
+        let host ="http://localhost:8086";
+        let database ="bayesian";
+        const influx = new Influx(host,database);
+        influx.createDB().then(()=>{
+            console.info("database created");
+            let nodes = [];
+            let states = [];
+            let probs = [];
+            
+            for(let i=0;i<net.nodi.length;i++){
+                nodes.push(net.nodi[i].id);
+                states.push(net.nodi[i].stati);
+                probs.push(net.nodi[i].probs);
+            }
+            /*
+            return influx.insert(nodes,states,probs)
+                .then(()=>console.info("inserted"));
+            */
+            influx.insert(nodes,states,probs)
+                .then(()=>console.info("inserted")
+                    .then(()=>{
+                        influx.retrive(nodes).then((data)=>{
+                            console.info("retrived");
+                            console.info(data);
+                        });
+                    }));
+                    
+        }).catch((err)=>console.info(err));
+        
+        
         this.dash = structure; //gli do in pasto la struttura completa di dashboard + net
         this.dash.id = null;
         this.step = 2;

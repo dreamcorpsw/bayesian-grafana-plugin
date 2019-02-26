@@ -161,7 +161,8 @@ class AppCtrl extends EventEmitter{
     }
     associate(){
         this.g.observe(this.nodi[this.nodePos].name,this.states_nodes[this.nodePos][this.statePos]);
-        this.g.sample(this.samples);
+        this.g.sample(this.samples)
+            .catch((err)=>console.info(err));
         this.showProb();
     }
     dissociate(nodePos){
