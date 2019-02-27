@@ -227,7 +227,7 @@ export class ImportNetCtrl {
             influx.insert(nodes,states,probs)
                 .then(()=>console.info("inserted")
                     .then(()=>{
-                        influx.retrive(nodes).then((data)=>{
+                        influx.retrieve(nodes).then((data)=>{
                             console.info("retrived");
                             console.info(data);
                         });

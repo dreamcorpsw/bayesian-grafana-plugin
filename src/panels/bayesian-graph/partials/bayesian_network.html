@@ -9,11 +9,15 @@
                 <select  class="gf-form-input" ng-model="ctrl.panel.rete_id" ng-options="rete.rete for rete in editor.networks" ng-change="editor.setNet(ctrl.panel.rete_id)"></select>
             </div>
         </div>
-
+        <!-- bayesian_network.html -->
         <div ng-repeat="x in editor.networks" ng-if="ctrl.panel.rete_id === editor.networks[$index]" ng-init="i=$index" class="gf-form">
             <label class="gf-form-label width-4">Node:</label>
             <div class="gf-form-select-wrapper width-8">
-                <select class="gf-form-input" ng-model="ctrl.panel.node_id" ng-options="nodo.id for nodo in editor.networks[i].nodi" ng-change="editor.setNode(ctrl.panel.node_id)"></select>
+                <select class="gf-form-input"
+                        ng-model="ctrl.panel.node_id"
+                        ng-options="nodo.id for nodo in editor.networks[i].nodi"
+                        ng-change="editor.setNode(ctrl.panel.node_id)">
+                </select>
             </div>
         </div>
 
