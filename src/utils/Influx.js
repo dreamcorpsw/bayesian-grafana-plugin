@@ -56,14 +56,8 @@ class Influx{
         return Promise.all(promises); //synchronization
     }
     
-    //da rivedere il ritorno di questa funzione
-    async retrive(nodes){
-        let query='q=SELECT * FROM';
-        for(let i=0;i<nodes.length;i++){
-            query += nodes[i]; //select from multiple measurements
-            if(i<nodes.length-1) //solo fino al penultimo aggiungo la virgola
-                query+=',';
-        }
+    async retrieveSingle(node){
+        let query='q=SELECT LAST(*) FROM '+node;
         console.info("QUERY: "+query);
         return $.ajax({
             url:this.host+'/query?db='+this.database,
@@ -78,6 +72,15 @@ class Influx{
                 console.log("Error: " + exception);
             }
         });
+    }
+    
+    //da rivedere il ritorno di questa funzione
+    async retrieve(nodes){
+        const promises = [];
+        for(let i=0;i<nodes.length;i++){
+            promises.push(this.retrieveSingle(nodes[i]));
+        }
+        return Promise.all(promises); //synchronization
     }
     
 }

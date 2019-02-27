@@ -8,11 +8,10 @@ const jsbayes = require('jsbayes');
 class BayesianTabCtrl{
     /** @ngInject */
     constructor($scope, backendSrv, $location){
-        //catturo un po' di variabili dallo scope
-        $scope.editor = this; //mi serve per collegare html e codice della classe
+        $scope.editor = this; //nome del controller nell'html
         this.panelCtrl = $scope.ctrl;
-        this.panel = this.panelCtrl.panel; //collega codice della classe e html
-        this.backendSrv = backendSrv;
+        this.panel = this.panelCtrl.panel; //variabile per modellare variabili presenti nell'html
+        this.backendSrv = backendSrv; //variabile per le chiamate backend di Grafana
         this.$location = $location;
         
         this.onInitData();
@@ -197,6 +196,8 @@ class BayesianTabCtrl{
             console.error("Impossible to set net");
         }
     }
+    
+    //bayesian_tab.js
     setNode(node){
         console.info("setNode()");
         if(this.netPos !== null && node !== null) {
