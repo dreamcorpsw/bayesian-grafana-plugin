@@ -54,7 +54,7 @@ export class NetParser{
         return false;
     }
 
-    
+
     //adding nodes and relative parents
     parse(jsonNet) {
 
@@ -137,3 +137,4 @@ export class NetParser{
     }
 }
 
+//test
