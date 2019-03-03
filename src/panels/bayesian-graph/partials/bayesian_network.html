@@ -6,7 +6,7 @@
         <div class="gf-form" >
             <span class="gf-form-label width-10">Bayesian Network:</span>
             <div class="gf-form-select-wrapper min-width-10">
-                <select  class="gf-form-input" ng-model="ctrl.panel.rete_id" ng-options="rete.rete for rete in editor.networks" ng-change="editor.setNet(ctrl.panel.rete_id)"></select>
+                <select  class="gf-form-input" ng-model="ctrl.panel.rete_id" ng-options="rete.id for rete in editor.networks" ng-change="editor.setNet(ctrl.panel.rete_id)"></select>
             </div>
         </div>
         <!-- bayesian_network.html -->
@@ -69,7 +69,7 @@
     </div>
 
     <!-- Dissociation -->
-    <div class="section gf-form-group" ng-if="ctrl.panel.node_id && editor.associated">
+    <div class="section gf-form-group" ng-if="editor.associated">
         <h5 class="section-heading">Dissociation</h5>
         <div class="gf-form-button-row">
             <button class="btn btn-inverse" ng-click="editor.dissociate(ctrl.panel.node_id)">

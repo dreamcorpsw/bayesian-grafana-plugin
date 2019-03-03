@@ -1,13 +1,11 @@
-//import appCtrl from "../../utils/appCtrl";
 import {MetricsPanelCtrl} from "grafana/app/plugins/sdk";
-const appCtrl = require('../../utils/appCtrl');
+const Influx = require('../../utils/Influx');
 export class netStatus extends MetricsPanelCtrl{
     /** @ngInject */
     constructor($scope,$injector,backendSrv){
         super($scope,$injector);
-        $scope.editor = this; //mi serve per collegare html e codice della classe
-        this.panelCtrl = $scope.ctrl;
-        this.panel = this.panelCtrl.panel; //collega codice della classe e html
+        $scope.editor = this;
+        this.panel = $scope.ctrl.panel;
         $scope.ctrl.panel.title = "Bayesian Network Status";
         this.backendSrv = backendSrv;
         
@@ -33,7 +31,6 @@ export class netStatus extends MetricsPanelCtrl{
             .catch(err=>console.log(err));
     }
     
-    //una rete alla volta, in modo asincrono
     async importSingleNet(uid) {
         return await this.backendSrv
             .getDashboardByUid(uid)
@@ -51,65 +48,8 @@ export class netStatus extends MetricsPanelCtrl{
         return Promise.all(promises);
     }
     
-    /*
-    init() {
-        this.net = appCtrl.getNet();
-        this.createBN();
-    }*/
-    
-    createBN() {
-        
-        const jsbayes = require('jsbayes');
-        this.g = jsbayes.newGraph();
-    
-        let rete = this.networks[0]; //scelgo sempre la prima
-        
-        this.nets.push(rete.rete); //per ora un solo valore
-        
-        let i;
-        //catturo le informazioni e creo i nodi
-        for (i = 0; i<rete.nodi.length; i++){ //per tutti i nodi li creo e li metto i una lista
-            this.id_nodes.push(rete.nodi[i].id); //mi salvo l'id del nodo
-            this.states_nodes.push(rete.nodi[i].stati); //mi salvo gli stati
-            this.threshold_nodes.push(rete.nodi[i].soglie); //mi salvo le soglie
-            this.nodi.push(this.g.addNode(this.id_nodes[i],this.states_nodes[i])); //nuovo nodo logico della rete bayesiana
-            //this.nodi[i].setCpt(rete.nodi[i].cpt); //inserisco le cpt dentro ai nodi e non più random
-        }
-        
-        this.nodes.push(this.id_nodes); //inserisco un array dentro un altro per essere pronto a gestire più reti
-        
-        var index, parent_name;
-        
-        //creo le relazioni padre-figlio
-        for (i = 0; i<rete.nodi.length; i++){ //per tutti i nodi aggiungo i genitori
-            if(rete.nodi[i].parents !== null) { // se ha almeno un padre
-                for (let j = 0; j < rete.nodi[i].parents.length; j++) {
-                    
-                    parent_name = rete.nodi[i].parents[j]; //mi salvo il nome del parent
-                    
-                    for(let k =0;k<rete.nodi.length;k++){ //per tutti i nodi cerco il parent con quel nome specifico
-                        if(parent_name === this.nodi[k].name) index = k;
-                    }
-                    //devo passare la variabile stessa non la stringa
-                    this.nodi[i].addParent(this.nodi[index]);
-                }
-            }
-        }
-        
-        //const context = this;
-        //random cpt
-        this.g.reinit().then(()=>this.initProbs());
-        
-    }
-    
-    initProbs(){
-        this.prob_nodes = appCtrl.getProbs();
-        console.info(this.prob_nodes);
-        this.probability_ready = true;
-    }
-    
     onInitData(){
-        this.networks=[];
+        this.networks=[]; //html
         this.uids = []; //per gli identificativi delle dashboard
         //utilizzo degli array contenenti varie informazioni sulla rete che andrò a sfruttare durante l'esecuzione del programma
         this.nodi = []; //array di variabili di nodi logici di jsbayes (qui dentro inserisco quello che ritorna la funzione g.addNode(nome, stati))
@@ -132,6 +72,15 @@ export class netStatus extends MetricsPanelCtrl{
         //ricorda se è già stato associato un nodo oppure no
         //this.associated = false;  //true: associato / false: non associato
         this.probability_ready = false;
+    }
+    
+    refresh(){
+        /*
+        this.probs = []; //pulisco l'array di probabilità
+        for(let i=0;i<this.networks.length;i++)
+            const influx = new Influx("http://localhost",":8086",this.networks[i].id);
+        //richieste di lettura
+        */
     }
 }
 

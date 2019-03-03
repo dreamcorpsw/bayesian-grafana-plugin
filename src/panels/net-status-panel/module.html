@@ -5,7 +5,7 @@
         <div class="gf-form">
             <span class="gf-form-label width-10">Network:</span>
             <div class="gf-form-select-wrapper width-15">
-                <select class="gf-form-input" ng-init="ctrl.panel.rete_id = editor.networks[0]" ng-model="ctrl.panel.rete_id" ng-options="t.rete for t in editor.networks"></select>
+                <select class="gf-form-input" ng-model="ctrl.panel.rete_id" ng-options="t.id for t in editor.networks"></select>
             </div>
         </div>
         <div ng-repeat="net in editor.networks" ng-if="ctrl.panel.rete_id === editor.networks[$index]" ng-init="i=$index" class="gf-form-group">
@@ -20,9 +20,10 @@
                     <div class="gf-form gf-form--right-margin">
                         <label class="gf-form-label width-4">{{editor.networks[i].nodi[j].soglie[k]}}</label>
                     </div>
+                    <!--
                     <div class="gf-form gf-form--right-margin">
-                        <label class="gf-form-label min-width-10">{{editor.networks[i].nodi[j].probs[k]}}></label>
-                    </div>
+                        <label class="gf-form-label min-width-10">{{editor.probs[i][j][k]}}></label>
+                    </div> -->
                 </div>
             </div>
         </div>

@@ -1,19 +1,31 @@
 import * as $ from 'jquery';
 class Influx{
-    constructor(host,database){
-        if(host!==null)
+    //need for host,port and database
+    constructor(host,port,database){
+        console.info("new Influx");
+        if(host!==null){
             this.host = host;
+            if(port!==null) {
+                this.port = port;
+                if (database !== null)
+                    this.database = database;
+                else console.info("null database");
+            }
+            else console.info("null port");
+        }
         else console.info("null host");
-        if(database!==null)
-            this.database = database;
-        else console.info("null database");
     }
-    
+    //check if the database already exists
+    async checkIfExist(){
+        /*
+        * to do
+        * */
+    }
     //create a db in the host
     async createDB(){
         let query = 'q=CREATE DATABASE '+this.database;
         return $.ajax({
-            url:this.host+'/query?',
+            url:this.host+this.port+'/query?',
             type:'GET',
             contentType:'application/octet-stream',
             data: query,
@@ -26,7 +38,7 @@ class Influx{
             }
         });
     }
-    
+    //insert into a single measurement
     async insertSingleMeasure(measurement,series,values){
         let query = measurement+',';
         for(let i = 0;i<series.length;i++){
@@ -35,9 +47,10 @@ class Influx{
                 query+=',';
             else query+=' ';
         }
-        console.info("QUERY: "+query);
+        //console.info("QUERY: "+query);
+        //console.info("URL: "+this.host+this.port+'/write?db='+this.database);
         return $.ajax({
-            url:this.host+'/write?db='+this.database,
+            url:this.host+this.port+'/write?db='+this.database,
             type:'POST',
             contentType:'application/octet-stream',
             data: query,
@@ -47,7 +60,7 @@ class Influx{
             }
         });
     }
-    
+    //insert inside all the db
     async insert(measurements,series,values){ //measurements = nodi, series = stati, values = probability
         const promises = [];
         for(let i=0;i<measurements.length;i++){
@@ -55,26 +68,25 @@ class Influx{
         }
         return Promise.all(promises); //synchronization
     }
-    
+    //returns a single measurement
     async retrieveSingle(node){
-        let query='q=SELECT LAST(*) FROM '+node;
-        console.info("QUERY: "+query);
+        let query='q=SELECT * FROM '+node+' ORDER BY time DESC LIMIT 1';
+        //console.info("QUERY: "+query);
         return $.ajax({
-            url:this.host+'/query?db='+this.database,
+            url:this.host+this.port+'/query?db='+this.database,
             type:'GET',
             contentType:'application/octet-stream',
             data: query,
             processData: false,
             success: function (data) {
-                console.info(data);
+                return data.results[0].series[0];
             },
             error: function(test, status, exception) {
                 console.log("Error: " + exception);
             }
         });
     }
-    
-    //da rivedere il ritorno di questa funzione
+    //returns all the last data of the db
     async retrieve(nodes){
         const promises = [];
         for(let i=0;i<nodes.length;i++){
@@ -82,6 +94,5 @@ class Influx{
         }
         return Promise.all(promises); //synchronization
     }
-    
 }
 module.exports=Influx;

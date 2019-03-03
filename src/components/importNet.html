@@ -13,6 +13,30 @@
         </div>
     </div>
 
+    <div class="gf-form">
+        <span class="gf-form-label width-8">Host</span>
+        <input type="text" class="gf-form-input max-width-6"
+               ng-model="ctrl.panel.host"
+               ng-value="ctrl.default_host"
+               ng-change="ctrl.setHost(ctrl.panel.host)">
+    </div>
+
+    <div class="gf-form">
+        <span class="gf-form-label width-8">Port</span>
+        <input type="text" class="gf-form-input max-width-6"
+               ng-model="ctrl.panel.port"
+               ng-value="ctrl.default_port"
+               ng-change="ctrl.setPort(ctrl.panel.port)">
+    </div>
+
+    <div class="gf-form">
+        <span class="gf-form-label width-8">Database</span>
+        <input type="text" class="gf-form-input max-width-6"
+               ng-model="ctrl.panel.database"
+               ng-value="ctrl.default_database"
+               ng-change="ctrl.setDatabase(ctrl.panel.database)">
+    </div>
+
     <div ng-if="ctrl.step === 1">
 
         <form class="page-action-bar">
@@ -126,6 +150,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Network inline rappresentation-->
         <!-- ************************ -->

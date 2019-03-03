@@ -1,63 +1,11 @@
 import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
-const appCtrl = require('../utils/appCtrl');
 const Influx = require('../utils/Influx');
-import * as $ from 'jquery';
-
-//const url = "http://localhost:8086/query?db=mydb&q=SELECT+value,region+FROM+cpu+WHERE+value=0.64" ;
-//const url = "http://localhost:8086/query?q=CREATE+DATABASE+dataaaa" ;
-/*
-const url = "http://localhost:8086/wirte?q=CREATE+DATABASE+dataaaa" ;
-const urlI = "http://localhost:8086/db/mydb/series?";
-const body = {
-    db:"mydb",
-    name:"foo",
-    columns:["col"],
-    points:[[23]]
-};
-const dataI = "cpu,host='serverA',region='us_west'+value=0.64" ;
-const urlS = "http://localhost:8086/query?db=mydb/";
-const dataS = "q=SELECT+value,region+FROM+cpu+WHERE+value=0.64" ;
-
-$.ajax({
-    url: "http://localhost:8086/query?db=mydb",
-    headers:{
-        'Authorization': 'Basic ' + btoa('admin:admin'),
-    },
-    type: 'POST',
-    data: {
-        q:"SELECT+value,region+FROM+cpu+WHERE+value=0.64",
-    },
-    success: function(data) { //we got the response
-        console.log(data);
-    },
-    error: function(test, status, exception) {
-        console.log("Error: " + exception);
-    }
-});
-
-/*
-let query = 'cpu,host=serverA,region=new value=69';
-$.ajax({
-    url:'http://localhost:8086/write?db=mydb',
-    type:'POST',
-    contentType:'application/octet-stream',
-    data: query,
-    processData: false,
-    success: function (data) {
-        console.info(data);
-    },
-    error: function(test, status, exception) {
-        console.log("Error: " + exception);
-    }
-}); */
-
-
-
+const NetParser = require('../utils/NetParser');
 
 //template struttura dashboard
-let structure = {
+let dashboard_template = {
     __inputs: [],
     __requires: [
         {
@@ -165,6 +113,256 @@ let structure = {
     network: null
 };
 
+let dashboard_template2 = {
+    __inputs: [
+        {
+            name: "DS_INFLUXDB-RETE",
+            label: "InfluxDB-rete",
+            description: "",
+            type: "datasource",
+            pluginId: "influxdb",
+            pluginName: "InfluxDB"
+        }
+    ],
+    __requires: [
+        {
+            type: "grafana",
+            id: "grafana",
+            name: "Grafana",
+            version: "5.4.0"
+        },
+        {
+            type: "panel",
+            id: "graph",
+            name: "Graph",
+            version: "5.0.0"
+        },
+        {
+            type: "datasource",
+            id: "influxdb",
+            name: "InfluxDB",
+            version: "5.0.0"
+        }
+    ],
+    annotations: {
+        list: [
+            {
+                builtIn: 1,
+                datasource: "-- Grafana --",
+                enable: true,
+                hide: true,
+                iconColor: "rgba(0, 211, 255, 1)",
+                name: "Annotations & Alerts",
+                type: "dashboard"
+            }
+        ]
+    },
+    editable: true,
+    gnetId: null,
+    graphTooltip: 0,
+    id: null,
+    iteration: 1551364330292,
+    links: [],
+    panels: [
+        {
+            aliasColors: {},
+            bars: false,
+            dashLength: 10,
+            dashes: false,
+            datasource: "${DS_INFLUXDB-RETE}",
+            fill: 1,
+            gridPos: {
+                h: 8,
+                w: 7,
+                x: 0,
+                y: 0
+            },
+            id: 2,
+            legend: {
+                avg: false,
+                current: false,
+                max: false,
+                min: false,
+                show: true,
+                total: false,
+                values: false
+            },
+            lines: true,
+            linewidth: 1,
+            links: [],
+            minSpan: 7,
+            nullPointMode: "null",
+            percentage: false,
+            pointradius: 5,
+            points: false,
+            renderer: "flot",
+            repeat: "nodo",
+            repeatDirection: "h",
+            seriesOverrides: [],
+            spaceLength: 10,
+            stack: false,
+            steppedLine: false,
+            targets: [
+                {
+                    groupBy: [],
+                    measurement: "$nodo",
+                    orderByTime: "DESC",
+                    policy: "default",
+                    refId: "A",
+                    resultFormat: "time_series",
+                    select: [
+                        [
+                            {
+                                params: [
+                                    "*"
+                                ],
+                                type: "field"
+                            }
+                        ]
+                    ],
+                    tags: []
+                }
+            ],
+            thresholds: [],
+            timeFrom: null,
+            timeRegions: [],
+            timeShift: null,
+            title: "Nodo: $nodo",
+            tooltip: {
+                shared: true,
+                sort: 0,
+                value_type: "individual"
+            },
+            type: "graph",
+            xaxis: {
+                buckets: null,
+                mode: "time",
+                name: null,
+                show: true,
+                values: []
+            },
+            yaxes: [
+                {
+                    format: "short",
+                    label: null,
+                    logBase: 1,
+                    max: null,
+                    min: null,
+                    show: true
+                },
+                {
+                    format: "short",
+                    label: null,
+                    logBase: 1,
+                    max: null,
+                    min: null,
+                    show: true
+                }
+            ],
+            yaxis: {
+                align: false,
+                alignLevel: null
+            }
+        }
+    ],
+    refresh: false,
+    schemaVersion: 16,
+    style: "dark",
+    tags: [],
+    templating: {
+        list: [
+            {
+                allValue: null,
+                current: {
+                    tags: [],
+                    text: "nodo1 + nodo2 + nodo3 + nodo4 + nodo5 + nodo6",
+                    value: [
+                        "nodo1",
+                        "nodo2",
+                        "nodo3",
+                        "nodo4",
+                        "nodo5",
+                        "nodo6"
+                    ]
+                },
+                hide: 0,
+                includeAll: false,
+                label: "Nodi",
+                multi: true,
+                name: "nodo",
+                options: [
+                    {
+                        selected: true,
+                        text: "nodo1",
+                        value: "nodo1"
+                    },
+                    {
+                        selected: true,
+                        text: "nodo2",
+                        value: "nodo2"
+                    },
+                    {
+                        selected: true,
+                        text: "nodo3",
+                        value: "nodo3"
+                    },
+                    {
+                        selected: true,
+                        text: "nodo4",
+                        value: "nodo4"
+                    },
+                    {
+                        selected: true,
+                        text: "nodo5",
+                        value: "nodo5"
+                    },
+                    {
+                        selected: true,
+                        text: "nodo6",
+                        value: "nodo6"
+                    }
+                ],
+                query: "nodo1,nodo2,nodo3,nodo4,nodo5,nodo6",
+                skipUrlSync: false,
+                type: "custom"
+            }
+        ]
+    },
+    time: {
+        from: "2019-02-28T08:41:53.444Z",
+        to: "2019-02-28T12:04:08.568Z"
+    },
+    timepicker: {
+        refresh_intervals: [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+        ],
+        time_options: [
+            "5m",
+            "15m",
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "2d",
+            "7d",
+            "30d"
+        ]
+    },
+    timezone: "",
+    title: "Inference Dashboard",
+    uid: "mjtTRCrmz",
+    version: 7
+};
+
 export class ImportNetCtrl {
     
     /** @ngInject */
@@ -181,6 +379,13 @@ export class ImportNetCtrl {
         this.folderId =  $routeParams.folderId ? Number($routeParams.folderId) || 0 : null;
         this.initialFolderTitle = 'Select a folder';
         
+        this.default_host ="http://localhost";
+        this.host = this.default_host;
+        this.default_port =":8086";
+        this.port = this.default_port;
+        this.default_database ="bayesian";
+        this.database = this.default_database;
+        
         // check gnetId in url
         if ($routeParams.gnetId) {
             this.gnetUrl = $routeParams.gnetId;
@@ -189,83 +394,111 @@ export class ImportNetCtrl {
         
     }
     
-    static initProbs(net){
-        let prob_nodes = appCtrl.getProbs(); //replace di appCtrl con netParser ==> ci sono anche i controlli di integrità
-        for(let i=0;i<prob_nodes.length;i++)
-            net.nodi[i].probs = prob_nodes[i]; //aggiungo le probabiltà
+    setHost(host){
+        this.host = host;
+    }
+    setPort(port){
+        this.port = port;
+    }
+    setDatabase(database){
+        this.database = database;
+    }
+    
+    static checkNet(net){
+        let parser = new NetParser(net);
+        let logic_net = parser.parse();
+        return logic_net !== null;
+    }
+    
+    static personalizeTemplating(net){
+        //preparo il templating
+        let query = "";
+        let text = "";
+        let value = [];
+        let option = {
+            selected: true,
+            text: "",
+            value: ""
+        };
+        let options = [];
+    
+        let id;
+    
+        for(let i=0;i<net.nodi.length;i++){
+            id=net.nodi[i].id;
+            query+=id;
+            text+=id;
+            value.push(id);
+            option.text = id;
+            option.value = id;
+            options.push(option);
+            if(i!==net.nodi.length-1){
+                query+=",";
+                text+=" + ";
+            }
+        }
+        //inserisco nel template i dati che mi servono per la variabile
+        dashboard_template2.templating.list[0].current.text=text;
+        dashboard_template2.templating.list[0].current.value=value;
+        dashboard_template2.templating.list[0].options=options;
+        dashboard_template2.templating.list[0].query=query;
+    }
+    
+    static setUpDatasource(net){
+        dashboard_template2.panels[0].datasource = "${DS_INFLUXDB-"+net.id.toUpperCase()+"}"; //devo mettere il nome giusto del database qui
     }
     
     //PERSONALIZZATA
     onUpload(net) {
-        this.network = net; //per l'html
-        //riceverò sempre una net, gli devo aggiungere il template della dashboard
-        ImportNetCtrl.initProbs(net);
-        structure.title = net.rete;
-        structure.network = net; //attacco il pezzo che ricevo al template
-        console.info("onUpload Rete: ");
-        console.info(structure.network);
-        
-        //creating a db
-        let host ="http://localhost:8086";
-        let database ="bayesian";
-        const influx = new Influx(host,database);
-        influx.createDB().then(()=>{
-            console.info("database created");
-            let nodes = [];
-            let states = [];
-            let probs = [];
+        if(ImportNetCtrl.checkNet(net)) {
             
-            for(let i=0;i<net.nodi.length;i++){
-                nodes.push(net.nodi[i].id);
-                states.push(net.nodi[i].stati);
-                probs.push(net.nodi[i].probs);
-            }
-            /*
-            return influx.insert(nodes,states,probs)
-                .then(()=>console.info("inserted"));
-            */
-            influx.insert(nodes,states,probs)
-                .then(()=>console.info("inserted")
-                    .then(()=>{
-                        influx.retrieve(nodes).then((data)=>{
-                            console.info("retrived");
-                            console.info(data);
-                        });
-                    }));
-                    
-        }).catch((err)=>console.info(err));
-        
-        
-        this.dash = structure; //gli do in pasto la struttura completa di dashboard + net
-        this.dash.id = null;
-        this.step = 2;
-        this.inputs = [];
-        
-        if (this.dash.__inputs) {
-            for (const input of this.dash.__inputs) {
-                const inputModel = {
-                    name: input.name,
-                    label: input.label,
-                    info: input.description,
-                    value: input.value,
-                    type: input.type,
-                    pluginId: input.pluginId,
-                    options: [],
-                };
-                
-                if (input.type === 'datasource') {
-                    this.setDatasourceOptions(input, inputModel);
-                } else if (!inputModel.info) {
-                    inputModel.info = 'Specify a string constant';
+            this.network = net; //per l'html
+    
+            ImportNetCtrl.setUpDatasource(net); //aggiungermi la datasource
+            ImportNetCtrl.personalizeTemplating(net); //aggiunta di variabili personalizzate template
+    
+            dashboard_template.title = net.id;
+            dashboard_template.network = net; //attacco il pezzo che ricevo al template
+    
+            //console.info("onUpload Rete: ");
+            //console.info(dashboard_template.network);
+    
+            //faccio partire Looper con una istanza di questa rete oppure dopo il primo ricalcolo
+            this.dash = dashboard_template; //gli do in pasto la struttura completa di dashboard + net
+            this.dash.id = null;
+            this.step = 2;
+            this.inputs = [];
+    
+            if (this.dash.__inputs) {
+                for (const input of this.dash.__inputs) {
+                    const inputModel = {
+                        name: input.name,
+                        label: input.label,
+                        info: input.description,
+                        value: input.value,
+                        type: input.type,
+                        pluginId: input.pluginId,
+                        options: [],
+                    };
+            
+                    if (input.type === 'datasource') {
+                        this.setDatasourceOptions(input, inputModel);
+                    } else if (!inputModel.info) {
+                        inputModel.info = 'Specify a string constant';
+                    }
+            
+                    this.inputs.push(inputModel);
                 }
-                
-                this.inputs.push(inputModel);
             }
+    
+            this.inputsValid = this.inputs.length === 0;
+            this.titleChanged();
+            this.uidChanged(true);
         }
-        
-        this.inputsValid = this.inputs.length === 0;
-        this.titleChanged();
-        this.uidChanged(true);
+        else {
+            console.info("Parse failed.");
+            //* pop up di grafana appears *
+        }
     }
     
     setDatasourceOptions(input, inputModel) {
@@ -361,6 +594,14 @@ export class ImportNetCtrl {
                 value: input.value,
             };
         });
+    
+        //creating a new Influx variable
+        //*******************************
+        //per ora creo il database con il nome della rete e poi glielo faccio scegliere
+        const influx = new Influx(this.host,this.port,this.network.id);
+        influx.createDB() //operazione unica per rete
+            .then(()=>console.info("database created"))
+            .catch((err)=>console.info(err));
         
         return this.backendSrv
             .post('api/dashboards/import', {
