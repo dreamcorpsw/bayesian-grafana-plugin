@@ -77,32 +77,41 @@ let net = {
 
 
 
-it("Should call console.info" , () => {
+test("Should call console.info" , () => {
     expect(console.info).toBeCalledWith("NetParser()")
 });
 
-let i, j;
-let nodes = []; //array di nodi ritornati dalla creazione di nodi con jsbayes, serve per collegare ai padri successivamente
-//addNode
-let logicNet = jsbayes.newGraph();
-for (i = 0; i < net.nodi.length; i++) {
-    if(NetParser.isOk(net.nodi[i])){
-        //console.info("node: "+jsonNet.nodi[i].id+" ok");
-        nodes.push(logicNet.addNode(net.nodi[i].id, net.nodi[i].stati)); //aggiungo un nuovo nodo logico della rete bayesiana al graph
-    }
-}
 
-it("Testing getParentIndex, ritorna l'indice del nodo padre dato il nome di un nodo", () => {
+
+test("Testing getParentIndex, ritorna l'indice del nodo padre dato il nome di un nodo", () => {
+    let i, j;
+    let nodes = []; //array di nodi ritornati dalla creazione di nodi con jsbayes, serve per collegare ai padri successivamente
+    // addNode
+    let logicNet = jsbayes.newGraph();
+    for (i = 0; i < net.nodi.length; i++) {
+        if(NetParser.isOk(net.nodi[i])){
+            //console.info("node: "+jsonNet.nodi[i].id+" ok");
+            nodes.push(logicNet.addNode(net.nodi[i].id, net.nodi[i].stati)); //aggiungo un nuovo nodo logico della rete bayesiana al graph
+        }
+    }
 
     expect(NetParser.getParentIndex("nodo1  ",nodes)).toEqual(-1);
 
     expect(NetParser.getParentIndex("nodo3",nodes)).toEqual(2);
 });
 
-let prob_true = [0.4, 0.6 ]
-let prob_false = [0.5, 0.6]
+test("Should check if thresholds are in ascending order", () => {
+    let ascending_true=[1,2,3]
+    let ascending_false=[3,2,1]
+    expect(NetParser.ascendingOrder(ascending_false)).toEqual(false);
+    expect(NetParser.ascendingOrder(ascending_true)).toEqual(true);
+})
 
-it("Testing sum probability", () => {
+test("Testing sum probability", () => {
+
+    let prob_true = [0.4, 0.6 ]
+    let prob_false = [0.5, 0.6]
+
 
     expect(NetParser.checkNormalize(prob_true)).toEqual(true);
 
