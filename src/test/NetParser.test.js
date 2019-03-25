@@ -51,18 +51,15 @@ test("Should check if thresholds are in ascending order", () => {
 });
 
 test("Return the result of the check: true, the values are the exact number", () => {
-    /*const wrong_node = net.nodi.slice();
-    wrong_node[0].soglie = ["ciao"]
-    expect(NetParser.isOk(wrong_node[0])).toEqual(false)*/
-    //TODO capire perchè il codice qui sopra influenza l'array net.nodi
+
     expect(NetParser.isOk(wrong_net.nodi[0])).toEqual(false);
     expect(NetParser.isOk(net.nodi[0])).toEqual(true)
-})
+});
 
 test("Controls nodes names", () => {
     expect(NetParser.controlNameNodes(net)).toEqual(false);
     expect(NetParser.controlNameNodes(wrong_net)).toEqual(true);
-})
+});
 
 test("Testing sum probability", () => {
 
@@ -81,4 +78,4 @@ test("Testing checkCpt", () => {
 
 test("Testing parse", () => {
     expect(wrong_parser.parse()).toEqual(null)
-})
+});
