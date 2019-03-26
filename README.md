@@ -35,8 +35,8 @@ Accedere tramite localhost con le credenziali "admin:admin" se è la prima volta
 ## Authors
 
 * **Davide Ghiotto** - *Progettazione Struttura Plugin* - [Davide Ghiotto](https://github.com/davide97g)
-* **Marco D'Avanzo** - *Setup Test* 
-* **Matteo Bordin** - *Revisione Documenti* 
+* **Marco Davanzo** - *Setup Test* 
+* **Matteo Bordin** - *Revisione Documenti* - [Matteo Bordin](https://github.com/matbord)
 * **Davide Liu** - *Implementazione jsbayes*
 * **Michele Clerici** - *Gestione input file json* 
 * **Pietro Casotto** - *Implementazione Comunicazione InfluxDB*
