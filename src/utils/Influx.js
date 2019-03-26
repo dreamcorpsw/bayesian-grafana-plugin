@@ -2,7 +2,7 @@ import * as $ from 'jquery';
 class Influx{
     //need for host,port and database
     constructor(host,port,database){
-        console.info("new Influx");
+        //console.info("new Influx");
         if(host!==null){
             this.host = host;
             if(port!==null) {
@@ -16,11 +16,10 @@ class Influx{
         else console.info("null host");
     }
     //check if the database already exists
+    /*
     async checkIfExist(){
-        /*
-        * to do
-        * */
-    }
+    
+    }*/
     //create a db in the host
     async createDB(){
         let query = 'q=CREATE DATABASE '+this.database;
@@ -39,7 +38,7 @@ class Influx{
         });
     }
     //insert into a single measurement
-    async insertSingleMeasure(measurement,series,values){
+    async insertSingle(measurement,series,values){
         let query = measurement+',';
         for(let i = 0;i<series.length;i++){
             query+=series[i]+'='+values[i];
@@ -64,12 +63,12 @@ class Influx{
     async insert(measurements,series,values){ //measurements = nodi, series = stati, values = probability
         const promises = [];
         for(let i=0;i<measurements.length;i++){
-            promises.push(this.insertSingleMeasure(measurements[i],series[i],values[i]))
+            promises.push(this.insertSingle(measurements[i],series[i],values[i]))
         }
         return Promise.all(promises); //synchronization
     }
     //returns a single measurement
-    async retrieveSingle(node){
+    async readSingle(node){
         let query='q=SELECT * FROM '+node+' ORDER BY time DESC LIMIT 1';
         //console.info("QUERY: "+query);
         return $.ajax({
@@ -87,12 +86,12 @@ class Influx{
         });
     }
     //returns all the last data of the db
-    async retrieve(nodes){
+    async read(nodes){
         const promises = [];
         for(let i=0;i<nodes.length;i++){
-            promises.push(this.retrieveSingle(nodes[i]));
+            promises.push(this.readSingle(nodes[i]));
         }
         return Promise.all(promises); //synchronization
     }
 }
-module.exports=Influx;
+module.exports = Influx;

@@ -11,8 +11,8 @@
     },
     "keywords": ["dreamcorp","bayesian","inference","nodes","app","swe","dream"],
     "logos": {
-      "small": "img/logo.png",
-      "large": "img/logo.png"
+      "small": "img/logo_circle.png",
+      "large": "img/logo_circle.png"
     },
     "links": [
       {"name": "GitHub", "url": "https://github.com/DreamCorpSWE/progetto-swe"},
@@ -21,8 +21,8 @@
     ],
     "screenshots": [
     ],
-    "version": "1.0.1",
-    "updated": "2019-03-01"
+    "version": "1.0.2",
+    "updated": "2019-03-05"
   },
 
   "includes": [

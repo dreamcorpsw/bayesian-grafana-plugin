@@ -3,6 +3,7 @@ import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
 const Influx = require('../utils/Influx');
 const NetParser = require('../utils/NetParser');
+const SyntaxChecker = require('../utils/SyntaxChecker');
 
 //template struttura dashboard
 let dashboard_template = {
@@ -112,7 +113,6 @@ let dashboard_template = {
     version: 3,
     network: null
 };
-
 let dashboard_template2 = {
     __inputs: [
         {
@@ -157,7 +157,7 @@ let dashboard_template2 = {
             }
         ]
     },
-    editable: true,
+    editable: false,
     gnetId: null,
     graphTooltip: 0,
     id: null,
@@ -268,7 +268,7 @@ let dashboard_template2 = {
     refresh: false,
     schemaVersion: 16,
     style: "dark",
-    tags: [],
+    tags: ["bayesian-network"],
     templating: {
         list: [
             {
@@ -359,8 +359,9 @@ let dashboard_template2 = {
     },
     timezone: "",
     title: "Inference Dashboard",
-    uid: "mjtTRCrmz",
-    version: 7
+    uid: "mjtTRCrmzF",
+    version: 7,
+    network: null
 };
 
 export class ImportNetCtrl {
@@ -386,6 +387,8 @@ export class ImportNetCtrl {
         this.default_database ="bayesian";
         this.database = this.default_database;
         
+        
+        
         // check gnetId in url
         if ($routeParams.gnetId) {
             this.gnetUrl = $routeParams.gnetId;
@@ -404,22 +407,12 @@ export class ImportNetCtrl {
         this.database = database;
     }
     
-    static checkNet(net){
-        let parser = new NetParser(net);
-        let logic_net = parser.parse();
-        return logic_net !== null;
-    }
-    
-    static personalizeTemplating(net){
+    static personalizeTemplating(net,dash){
+        console.info("personalizeTemplating");
         //preparo il templating
         let query = "";
         let text = "";
         let value = [];
-        let option = {
-            selected: true,
-            text: "",
-            value: ""
-        };
         let options = [];
     
         let id;
@@ -429,42 +422,54 @@ export class ImportNetCtrl {
             query+=id;
             text+=id;
             value.push(id);
+            
+            let option = {
+                selected: true,
+                text: "",
+                value: ""
+            };
+            
             option.text = id;
             option.value = id;
+            
             options.push(option);
             if(i!==net.nodi.length-1){
                 query+=",";
                 text+=" + ";
             }
         }
+        
         //inserisco nel template i dati che mi servono per la variabile
-        dashboard_template2.templating.list[0].current.text=text;
-        dashboard_template2.templating.list[0].current.value=value;
-        dashboard_template2.templating.list[0].options=options;
-        dashboard_template2.templating.list[0].query=query;
+        dash.templating.list[0].current.text=text;
+        dash.templating.list[0].current.value=value;
+        dash.templating.list[0].options=options;
+        dash.templating.list[0].query=query;
+        
+        console.info(text);
+        console.info(value);
+        console.info(options);
+        console.info(query);
     }
-    
-    static setUpDatasource(net){
-        dashboard_template2.panels[0].datasource = "${DS_INFLUXDB-"+net.id.toUpperCase()+"}"; //devo mettere il nome giusto del database qui
+    static setUpDatasource(net,dash){
+        dash.panels[0].datasource = "InfluxDB-"+net.id; //devo mettere il nome giusto del database qui
     }
-    
-    //PERSONALIZZATA
+    static boxing(net, dash){
+        ImportNetCtrl.setUpDatasource(net,dash); //aggiungermi la datasource
+        ImportNetCtrl.personalizeTemplating(net,dash); //aggiunta di variabili personalizzate template
+        dash.title = net.id;
+        dash.network = net; //attacco il pezzo che ricevo al template
+        return dash;
+    }
+
     onUpload(net) {
-        if(ImportNetCtrl.checkNet(net)) {
-            
+    
+        let parser = new NetParser();
+        if(parser.checkSemantic(net)) {
+    
             this.network = net; //per l'html
     
-            ImportNetCtrl.setUpDatasource(net); //aggiungermi la datasource
-            ImportNetCtrl.personalizeTemplating(net); //aggiunta di variabili personalizzate template
-    
-            dashboard_template.title = net.id;
-            dashboard_template.network = net; //attacco il pezzo che ricevo al template
-    
-            //console.info("onUpload Rete: ");
-            //console.info(dashboard_template.network);
-    
-            //faccio partire Looper con una istanza di questa rete oppure dopo il primo ricalcolo
-            this.dash = dashboard_template; //gli do in pasto la struttura completa di dashboard + net
+            this.dash = ImportNetCtrl.boxing(net,dashboard_template2);
+            /** Default after this line */
             this.dash.id = null;
             this.step = 2;
             this.inputs = [];
@@ -495,12 +500,9 @@ export class ImportNetCtrl {
             this.titleChanged();
             this.uidChanged(true);
         }
-        else {
-            console.info("Parse failed.");
-            //* pop up di grafana appears *
-        }
+        else console.info("Semantic Parse Failed");
     }
-    
+    /** Default */
     setDatasourceOptions(input, inputModel) {
         const sources = _.filter(config.datasources, val => {
             return val.type === input.pluginId;
@@ -516,7 +518,7 @@ export class ImportNetCtrl {
             return { text: val.name, value: val.name };
         });
     }
-    
+    /** Default */
     inputValueChanged() {
         this.inputsValid = true;
         for (const input of this.inputs) {
@@ -525,7 +527,7 @@ export class ImportNetCtrl {
             }
         }
     }
-    
+    /** Default */
     titleChanged() {
         this.titleTouched = true;
         this.nameExists = false;
@@ -545,7 +547,7 @@ export class ImportNetCtrl {
                 this.nameValidationError = err.message;
             });
     }
-    
+    /** Default */
     uidChanged(initial) {
         this.uidExists = false;
         this.hasUidValidationError = false;
@@ -567,20 +569,20 @@ export class ImportNetCtrl {
                 err.isHandled = true;
             });
     }
-    
+    /** Default */
     onFolderChange(folder) {
         this.folderId = folder.id;
         this.titleChanged();
     }
-    
+    /** Default */
     onEnterFolderCreation() {
         this.inputsValid = false;
     }
-    
+    /** Default */
     onExitFolderCreation() {
         this.inputValueChanged();
     }
-    
+    /** Default */
     isValid() {
         return this.inputsValid && this.folderId !== null;
     }
@@ -598,10 +600,13 @@ export class ImportNetCtrl {
         //creating a new Influx variable
         //*******************************
         //per ora creo il database con il nome della rete e poi glielo faccio scegliere
+        //devo fare in modo che la struttura della rete abbia host e port perchè mi servirà dopo
         const influx = new Influx(this.host,this.port,this.network.id);
         influx.createDB() //operazione unica per rete
             .then(()=>console.info("database created"))
             .catch((err)=>console.info(err));
+        
+        this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
         
         return this.backendSrv
             .post('api/dashboards/import', {
@@ -619,12 +624,11 @@ export class ImportNetCtrl {
     loadJsonText() {
         try {
             this.parseError = '';
-            this.onUpload(JSON.parse(this.jsonText)); //invio tutto quello che ricevo
-            
+            //if(SyntaxChecker.checkSyntax(this.jsonText))
+                this.onUpload(JSON.parse(this.jsonText)); //invio tutto quello che ricevo
         } catch (err) {
             console.log(err);
             this.parseError = err.message;
-            return;
         }
     }
     

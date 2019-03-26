@@ -1,9 +1,9 @@
-const jsbayes = require('jsbayes');
+
 //classe per poter parsare efficacemente una rete bayesiana
 class NetParser{
-    constructor(jsonNet){
-        console.info("NetParser()");
-        this.jsonNet = jsonNet;
+    constructor(){
+        //console.info("NetParser()");
+        this.jsonNet = null;
         this.logicNet = null;
         this.hasErrors = false;
         //console.info(jsonNet);
@@ -47,14 +47,14 @@ class NetParser{
         }
         return false;
     }
-    
     static checkNormalize(probabilities){
         let sum = 0;
         for(let i=0;i<probabilities.length;i++)
             sum+=probabilities[i];
         console.info(sum);
-        return sum===1;
+        return sum>=0.99;
     }
+    
     //check logic on cpt
     static checkCpt(NparentsStates,cpt){
         if(NparentsStates === 1) return cpt.length === 1 && NetParser.checkNormalize(cpt[0]); //nessun genitore
@@ -71,8 +71,9 @@ class NetParser{
     }
     
     //adding nodes and relative parents
-    parse() {
+    checkSemantic(text_net) {
         
+        this.jsonNet = text_net;
         //new Bayesian Net
         this.logicNet = jsbayes.newGraph();
         
@@ -113,15 +114,16 @@ class NetParser{
                         }
                     }
                 }
-                /*
+               /*
                 //finiti tutti i genitori conto il numero di stati di tutti moltiplicati e glielo passo alla funzione di controllo
                 if(NetParser.checkCpt(NparentsStates,jsonNet.nodi[i].cpt))
                     nodes[i].setCpt(jsonNet.nodi[i].cpt); //setting the cpt
                 else {
                     this.hasErrors = true;
                     console.info("node :"+i+" has problem on his cpt");
-                }*/
-                
+                }
+                */
+               
                 //nessun controllo per ora
                 nodes[i].setCpt(this.jsonNet.nodi[i].cpt); //setting the cpt
             }
@@ -135,6 +137,10 @@ class NetParser{
             return this.logicNet;
         }
         else return null;
+    }
+    
+    buildLogicNet(){
+    
     }
     
     /*
@@ -171,4 +177,4 @@ class NetParser{
     */
 }
 
-module.exports=NetParser;
+module.exports= new NetParser();

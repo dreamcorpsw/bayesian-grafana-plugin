@@ -1,30 +1,20 @@
 //const Looper = require('../../utils/Looper');
+//per utilizzare la classe NetHandler
+const SingletonNetHandler = require("../../utils/SingletonNetHandler");
+
 class BayesianTabCtrl{
     /** @ngInject */
-    constructor($scope, backendSrv, $location){
+    constructor($scope, backendSrv){
         console.info("BayesianTabCtrl");
         $scope.editor = this; //nome del controller nell'html
-        this.panelCtrl = $scope.ctrl;
-        this.panel = this.panelCtrl.panel; //variabile per modellare variabili presenti nell'html
+        this.panel = $scope.ctrl.panel; //variabile per modellare variabili presenti nell'html
         this.backendSrv = backendSrv; //variabile per le chiamate backend di Grafana
-        this.$location = $location;
-        
+        this.parent = $scope.$parent.ctrl; //il padre della tab è il panel --> utile per prendersi i valori
         this.onInitData(); //inizializzo le variabili
-        
-        this.searchNets()
-            .then(()=>this.importNets()
-                .then(()=>console.info("done importing nets"))
-            )
-            .catch((err)=>console.info(err));
     }
     onInitData(){
-        this.networks=[];
-        this.dashboards=[];
-        this.uids = []; //per gli identificativi delle dashboard
         //utilizzo degli array contenenti varie informazioni sulla rete che andrò a sfruttare durante l'esecuzione del programma
         this.nodi = [];
-        
-        this.samples = 10000; //numero di sampling da fare, il default, utilizzato anche da jsbayes, è 10k
         
         //variabili che memorizzano la posizione all'interno degli array precedenti che è stata scelta dall'utente a schermo
         this.netPos = null; //indice della rete scelta
@@ -37,48 +27,10 @@ class BayesianTabCtrl{
         this.panel.node_id = null; //nome del nodo scelto
         this.panel.states_node_id = null; //nome dello stato scelto
         this.panel.threshold_node_id = null; //valore della soglia scelta
-        this.panel.samples = 10000; //numero di sample scelto
         
         this.associated=false;
         
-    }
-    searchNets(){
-        //console.info("searchNets()");
-        return this.backendSrv.get('/api/search?tag=bayesian-network')
-            .then(res =>{
-                this.uids = res;
-                console.info(this.uids);
-            })
-            .catch(err=>console.log(err));
-    }
-    async importSingleNet(uid) {
-        return await this.backendSrv
-            .getDashboardByUid(uid)
-            .then(res => {
-                this.dashboards.push(res.dashboard);
-                this.networks.push(res.dashboard.network);
-            })
-            .catch(err => {
-                err.isHandled = true;
-            });
-    }
-    importNets() {
-        this.dashboards = []; //reset
-        this.networks = []; //reset
-        const promises = this.uids.map(uid_container => this.importSingleNet(uid_container.uid));
-        return Promise.all(promises); //synchro
-    }
-    save(index) {
-        //need for check integrity of the net
-        //
-        return this.backendSrv
-            .post('api/dashboards/import', {
-                dashboard: this.dashboards[index],
-                overwrite: true,
-                folderId: 0,
-            })
-            .then(()=>console.info("saved"))
-            .catch((err)=>console.info(err));
+        this.networks = this.parent.nets; //si prende le reti dal panel
     }
     /*
     * methods for settings values
@@ -132,6 +84,12 @@ class BayesianTabCtrl{
             console.error("Impossible to set state");
         }
     }
+    /*
+    * Net Structure changes
+    * */
+    modify(net) {
+        this.parent.modify(net);
+    }
     setThreshold(threshold, index){
         //qui modifico le soglie anche nel JSON originale
         console.info("setThreshold() of index "+index);
@@ -144,32 +102,10 @@ class BayesianTabCtrl{
             console.error("Impossible to set threshold");
         }
     }
-    setSamples(number){
-        //console.info("setSamples()");
-        if(number !== null){
-            this.samples = number;
-            console.info("done");
-        }
-        else {
-            this.samples = 10000; //default
-            console.info("Impossible to set samples");
-        }
-    }
-    
-    /*
-    * Net Structure changes
-    * */
     associate(NodeId){
-        //appCtrl.emit('associate', NodeId, this.nodePos, this.panel.id, this.backendSrv);
         this.associated = true;
-        //modifico il valore del panel associato con l'id di questo panel
         this.networks[this.netPos].nodi[this.nodePos].panel = this.panel.id;
-        //lancio la save
-        this.save(this.netPos)
-            .then(()=>{
-                //Looper.setBackendSrv(this.backendSrv); //invio la variabile per fare le richieste in backend
-                //Looper.configure(this.networks[this.netPos]);
-            });
+        this.modify(this.networks[this.netPos]);
     }
     dissociate(NodeId){
         //find nodePos
@@ -181,25 +117,15 @@ class BayesianTabCtrl{
                 }
             }
         }
-        //appCtrl.emit('dissociate', NodeId, this.nodePos);
         this.associated = false;
-        //modifico il valore del panel associato a null
         this.networks[this.netPos].nodi[this.nodePos].panel = null;
-        //lancio la save
-        this.save(this.netPos)
-            .then(()=>{
-                //Looper.setBackendSrv(this.backendSrv); //invio la variabile per fare le richieste in backend
-                //Looper.configure(this.networks[this.netPos]); //configurazione
-                //per utilizzare la unobserve mi serve la rete e il nodo
-                //Looper.unobserve(this.netPos,this.networks[this.netPos].nodi[this.nodePos]); //forzo la unobserve
-            });
+        this.modify(this.networks[this.netPos]);
     }
 }
 
-//funzione di export per sfruttare l'import di questa classe
 export function BayesianTab() {
     return {
-        templateUrl: 'public/plugins/bayesian-graph/partials/bayesian_network.html', //struttura html a cui si appoggia
-        controller: BayesianTabCtrl //associo la classe appena creata come controller che mi serve per lavorare con angular
+        templateUrl: 'public/plugins/bayesian-graph/partials/bayesian_network.html',
+        controller: BayesianTabCtrl
     };
 }

@@ -27,7 +27,6 @@
                    ng-model="ctrl.panel.threshold[i]"
                    ng-value="{{editor.networks[editor.netPos].nodi[editor.nodePos].soglie[i] || ctrl.panel.threshold[i]}}"
                    ng-change="editor.setThreshold(ctrl.panel.threshold[i], i)">
-            <!-- ***NEED TO FIX-->
         </div>
 
         <!--
@@ -41,30 +40,30 @@
         -->
     </div>
 
-    <!-- Association -->
-    <div class="section gf-form-group"ng-if="ctrl.panel.node_id && !editor.associated">
-        <h5 class="section-heading">Association</h5>
-        <div class="gf-form">
-            <span class="gf-form-label width-8">Samples</span>
-            <input type="number" class="gf-form-input max-width-5"
-                   ng-model="ctrl.panel.samples"
-                   ng-value="editor.samples"
-                   ng-change="editor.setSamples(ctrl.panel.samples)">
-            <span class="gf-form-button">
-          <button class="btn btn-inverse" ng-click="editor.associate(ctrl.panel.node_id)">
-            Associate
-          </button>
-        </span>
-        </div>
-    </div>
-
     <!-- Saving -->
     <div class="section gf-form-group"ng-if="ctrl.panel.node_id && !editor.associated">
         <h5 class="section-heading">Saving</h5>
         <div class="gf-form">
-          <button class="btn btn-success width-6" ng-click="editor.save(editor.netPos)">
-              <i class="fa fa-save"></i> Save
-          </button>
+            <button class="btn btn-success width-6" ng-click="editor.save(editor.netPos)">
+                <i class="fa fa-save"></i> Save
+            </button>
+        </div>
+    </div>
+
+    <!-- Association -->
+    <div class="section gf-form-group"ng-if="ctrl.panel.node_id && !editor.associated">
+        <h5 class="section-heading">Association</h5>
+        <div class="gf-form">
+            <!-- <span class="gf-form-label width-8">Samples</span>
+            <input type="number" class="gf-form-input max-width-5"
+                   ng-model="ctrl.panel.samples"
+                   ng-value="editor.samples"
+                   ng-change="editor.setSamples(ctrl.panel.samples)"> -->
+            <span class="gf-form-button">
+              <button class="btn btn-inverse" ng-click="editor.associate(ctrl.panel.node_id)">
+                  Associate
+              </button>
+            </span>
         </div>
     </div>
 
