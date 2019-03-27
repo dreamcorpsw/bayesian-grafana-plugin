@@ -42,7 +42,7 @@ it("Create null CreateDB", async () => {
     //expect.assertions(1);
     undefinedInflux.createDB().catch((err)=>console.log(err));
     await expect($.ajax).toEqual({
-        url:null+null+'/perquery?',
+        url:null+null+'/query?',
         type:'GET',
         contentType:'application/octet-stream',
         data: query,
