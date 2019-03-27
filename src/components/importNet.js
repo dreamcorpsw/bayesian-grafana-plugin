@@ -2,8 +2,8 @@ import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
 const Influx = require('../utils/Influx');
-const NetParser = require('../utils/NetParser');
-const SyntaxChecker = require('../utils/SyntaxChecker');
+const parser = require('../utils/NetParser');
+//const SyntaxChecker = require('../utils/SyntaxChecker');
 
 //template struttura dashboard
 let dashboard_template = {
@@ -454,6 +454,7 @@ export class ImportNetCtrl {
         dash.panels[0].datasource = "InfluxDB-"+net.id; //devo mettere il nome giusto del database qui
     }
     static boxing(net, dash){
+        console.info("boxing");
         ImportNetCtrl.setUpDatasource(net,dash); //aggiungermi la datasource
         ImportNetCtrl.personalizeTemplating(net,dash); //aggiunta di variabili personalizzate template
         dash.title = net.id;
@@ -462,10 +463,9 @@ export class ImportNetCtrl {
     }
 
     onUpload(net) {
-    
-        let parser = new NetParser();
+        console.info("onUpload");
         if(parser.checkSemantic(net)) {
-    
+            console.info("checkSemantic ok");
             this.network = net; //per l'html
     
             this.dash = ImportNetCtrl.boxing(net,dashboard_template2);
@@ -597,16 +597,13 @@ export class ImportNetCtrl {
             };
         });
     
-        //creating a new Influx variable
-        //*******************************
-        //per ora creo il database con il nome della rete e poi glielo faccio scegliere
-        //devo fare in modo che la struttura della rete abbia host e port perchè mi servirà dopo
-        const influx = new Influx(this.host,this.port,this.network.id);
+        this.dash.network.host = this.host;
+        this.dash.network.port = this.port;
+        this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
+        const influx = new Influx(this.host,this.port,this.dash.network.id);
         influx.createDB() //operazione unica per rete
             .then(()=>console.info("database created"))
             .catch((err)=>console.info(err));
-        
-        this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
         
         return this.backendSrv
             .post('api/dashboards/import', {

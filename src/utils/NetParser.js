@@ -1,19 +1,15 @@
-
 //classe per poter parsare efficacemente una rete bayesiana
 class NetParser{
     constructor(){
-        //console.info("NetParser()");
+        console.info("NetParser()");
         this.jsonNet = null;
-        this.logicNet = null;
         this.hasErrors = false;
-        //console.info(jsonNet);
-        //this.parse();
     }
     //find a parent index for a node
     static getParentIndex(parentName, nodes){
         let indexParent = -1;
         for(let k=0;k<nodes.length;k++){
-            if(parentName === nodes[k].name)
+            if(parentName === nodes[k].id)
                 indexParent = k;
         }
         return indexParent;
@@ -72,23 +68,19 @@ class NetParser{
     
     //adding nodes and relative parents
     checkSemantic(text_net) {
-        
+        console.info("checkSemantic()");
         this.jsonNet = text_net;
-        //new Bayesian Net
-        this.logicNet = jsbayes.newGraph();
         
         //init vars
         let i, j;
-        let nodes = []; //array di nodi ritornati dalla creazione di nodi con jsbayes, serve per collegare ai padri successivamente
         this.hasErrors = NetParser.controlNameNodes(this.jsonNet); //check for future
         
         //addNode
         for (i = 0; i < this.jsonNet.nodi.length; i++) {
-            if(NetParser.isOk(this.jsonNet.nodi[i])){
-                //console.info("node: "+jsonNet.nodi[i].id+" ok");
-                nodes.push(this.logicNet.addNode(this.jsonNet.nodi[i].id, this.jsonNet.nodi[i].stati)); //aggiungo un nuovo nodo logico della rete bayesiana al graph
+            if(!NetParser.isOk(this.jsonNet.nodi[i])){
+                this.hasErrors = true; //stop for the future, but not the cycle
+                return false;
             }
-            else this.hasErrors = true; //stop for the future, but not the cycle
         }
         
         //future operations check
@@ -103,14 +95,15 @@ class NetParser{
                 //check num parents
                 if (node.parents !== null) {
                     for (j = 0; j < node.parents.length; j++) {
-                        indexParent = NetParser.getParentIndex(node.parents[j], nodes);
+                        indexParent = NetParser.getParentIndex(node.parents[j], this.jsonNet.nodi);
                         if (indexParent !== -1) {  //check for mistake
-                            nodes[i].addParent(nodes[indexParent]);
+                            //nodes[i].addParent(nodes[indexParent]);
                             NparentsStates*=this.jsonNet.nodi[indexParent].stati.length;
                         }
                         else {
-                            console.info("Missing parent n°" + j + " for node: " + node.name);
+                            console.info("Missing parent n°" + j + " for node: " + node.id);
                             this.hasErrors = true;
+                            return false;
                         }
                     }
                 }
@@ -123,58 +116,13 @@ class NetParser{
                     console.info("node :"+i+" has problem on his cpt");
                 }
                 */
-               
-                //nessun controllo per ora
-                nodes[i].setCpt(this.jsonNet.nodi[i].cpt); //setting the cpt
             }
     
-            /*
-            //set random cpt
-            if (!this.hasErrors)
-                return this.setRandomCpt()
-                    .catch((err)=> console.info(err));
-             */
-            return this.logicNet;
         }
-        else return null;
+        else return false;
+        
+        return true;
     }
-    
-    buildLogicNet(){
-    
-    }
-    
-    /*
-    //set random conditional probability tables
-    setRandomCpt(){
-        return this.g.reinit()
-            .then(()=>this.g.sample(10000)
-                .then(()=> {
-                    console.info(this.g);
-                    return this.g
-                })
-            ) //sampling to fix probabilities in the nodes
-            .catch((err)=> console.info(err)); //catch for the errors
-    } */
-    /*
-    //returns the net if there are no errors, returns null instead
-    getLogicNet(){
-        //if(this.logicNet !== null) return this.logicNet; //if already exists, return it
-        //if(this.g !== null) return this.g;
-        if(this.jsonNet !== null){ //not empty json
-            return this.parse(this.jsonNet)
-                .then(()=>{
-                    if(!this.hasErrors)
-                        return this.g;
-                    else{
-                        console.info("hasErrors => returning null");
-                        return null;
-                    }
-                })
-                .catch((err)=>console.info(err));
-        }
-        else return null;
-    }
-    */
 }
 
 module.exports= new NetParser();

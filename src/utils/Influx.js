@@ -67,6 +67,7 @@ class Influx{
         }
         return Promise.all(promises); //synchronization
     }
+    /*
     //returns a single measurement
     async readSingle(node){
         let query='q=SELECT * FROM '+node+' ORDER BY time DESC LIMIT 1';
@@ -93,5 +94,6 @@ class Influx{
         }
         return Promise.all(promises); //synchronization
     }
+    */
 }
 module.exports = Influx;

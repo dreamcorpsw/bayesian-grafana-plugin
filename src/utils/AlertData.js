@@ -26,6 +26,21 @@ class AlertData{
             })
             .catch(err => err.isHandled=true);
     }
+    
+    async getValueFromAlert(netIndex,nodeIndex,panelId){
+        
+        return await this.backend.get('/api/alerts/?panelId='+panelId)
+            .then(res => {
+                //not null, not empty, not null first, non empty first, not null evalData
+                let value = null;
+                if(res !== null && res.length !== 0 && res[0] !== null && res[0].length !==0 && res[0].evalData !== null && res[0].evalData.evalMatches !== null && res[0].evalData.evalMatches.length !== 0 && res[0].evalData.evalMatches[0].value !== null) {
+                    value = res[0].evalData.evalMatches[0].value;
+                }
+                return value;
+            })
+            .catch(err => err.isHandled=true);
+    }
+    
     getDataFromAllAlerts(nets){
         //console.info("getDataFromAllAlerts");
         this.networks = nets;

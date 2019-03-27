@@ -11,14 +11,16 @@ export class Control{
     onInitData(){
         this.samples = []; //contenitore per il numero di sample
         this.time = []; //contenitore per i tempi di refresh
-        this.networks = []; //contenitore strutture reti bayesiae
+        this.networks = []; //contenitore strutture reti bayesiane
         this.dashboards = []; //contenitore per le dashboard da salvare
         this.hasStarted = [];
         
         let loader = new DashboardLoader(this.backendSrv);
-        loader.getDashboards((res)=>{
+        loader.getDashboards()
+            .then((res)=>{
             this.dashboards = res;
             this.networks = loader.extract(res);
+            this.setDataFromNets();
         });
     }
     save(index) {

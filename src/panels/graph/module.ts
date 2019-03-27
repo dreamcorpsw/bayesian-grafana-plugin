@@ -323,7 +323,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     get panelPath() {
-        this.pluginId = "standard-graph";
+        this.pluginId = "dreamcorp-app"; //da sistemare *************************************************************************************************
         if (this._panelPath === undefined) {
             this._panelPath = '/public/plugins/' + this.pluginId + '/';
         }

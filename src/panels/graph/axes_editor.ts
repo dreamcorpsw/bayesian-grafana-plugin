@@ -83,7 +83,7 @@ export function axesEditorComponent() {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'public/plugins/standard-graph/partials/axes_editor.html',
+    templateUrl: 'partials/axes_editor.html', //devo sistemare questo path
     controller: AxesEditorCtrl,
   };
 }

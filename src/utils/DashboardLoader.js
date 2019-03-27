@@ -40,7 +40,7 @@ class DashboardLoader {
     extract(dashboards){ //ritorno sempre le dashboard e poi estraggo le nets
         let networks = [];
         for(let i=0;i<dashboards.length;i++)
-            networks.push(dashboards.network);
+            networks.push(dashboards[i].network);
         return networks;
     }
     getNets(){

@@ -29,6 +29,7 @@ class BayesianTabCtrl{
         this.panel.threshold_node_id = null; //valore della soglia scelta
         
         this.associated=false;
+        this.associated_node = -1; //indice del nodo già associato se esiste
         
         this.networks = this.parent.nets; //si prende le reti dal panel
     }
@@ -43,6 +44,7 @@ class BayesianTabCtrl{
             for(let i=0;i<this.networks[this.netPos].nodi.length;i++){
                 if(this.networks[this.netPos].nodi[i].panel === this.panel.id){
                     this.associated = true;
+                    this.associated_node = i;
                     found = true;
                 }
             }
@@ -102,23 +104,16 @@ class BayesianTabCtrl{
             console.error("Impossible to set threshold");
         }
     }
+    
     associate(NodeId){
         this.associated = true;
+        this.associated_node = this.nodePos;
         this.networks[this.netPos].nodi[this.nodePos].panel = this.panel.id;
         this.modify(this.networks[this.netPos]);
     }
     dissociate(NodeId){
-        //find nodePos
-        for(let i=0;i<this.networks.length;i++){
-            for(let j=0;j<this.networks[i].nodi.length;j++){
-                if(this.panel.id === this.networks[i].nodi[j].panel){
-                    this.netPos=i;
-                    this.nodePos=j;
-                }
-            }
-        }
         this.associated = false;
-        this.networks[this.netPos].nodi[this.nodePos].panel = null;
+        this.networks[this.netPos].nodi[this.associated_node].panel = null;
         this.modify(this.networks[this.netPos]);
     }
 }
