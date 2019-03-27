@@ -76,6 +76,7 @@ class Looper{
         },time);
     }
     
+    
     loopAsync(time){
         console.info("loopAsync()");
         const loader = new DashboardLoader(this.backendSrv); //scaricatore de porto
