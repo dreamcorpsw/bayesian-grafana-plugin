@@ -40,12 +40,6 @@ let query = 'q=CREATE DATABASE '+ undefinedInflux.database;
 
 
 
-it("Should print an error", () => {
-    undefinedInflux.createDB().then( () => {
-        expect(console.log).toBeCalledWith("sakldnaslkdj");
-    });
-
-});
 
 
 

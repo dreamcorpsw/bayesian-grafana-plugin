@@ -2,7 +2,7 @@ import * as $ from 'jquery';
 class Influx{
     //need for host,port and database
     constructor(host,port,database){
-        //console.info("new Influx");
+        console.info("new Influx");
         if(host!==null){
             this.host = host;
             if(port!==null) {
