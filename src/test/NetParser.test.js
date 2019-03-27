@@ -1,3 +1,5 @@
+/*
+
 const NetParser = require('../utils/NetParser');
 const jsbayes = require('jsbayes');
 
@@ -10,11 +12,9 @@ console.info = jest.fn();
 let wrong_net = require("../networks/wrong.network")
 let net = require("../networks/rete.json")
 
-let parser = new NetParser(net);
-let wrong_parser = new NetParser(wrong_net);
 
 
-
+NetParser.checkSemantic(net);
 
 let i, j;
 let nodes = []; //array di nodi ritornati dalla creazione di nodi con jsbayes, serve per collegare ai padri successivamente
@@ -79,3 +79,4 @@ test("Testing checkCpt", () => {
 test("Testing parse", () => {
     expect(wrong_parser.parse()).toEqual(null)
 });
+*/
