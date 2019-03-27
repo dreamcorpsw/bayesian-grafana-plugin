@@ -74,6 +74,7 @@ class Looper{
             }
         },time);
     }
+    
     linkDatabases(){
         for(let i=0;i<this.networks.length;i++){
             //bisogna aggiungere ad ogni rete i campi dati host & port
