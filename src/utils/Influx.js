@@ -17,9 +17,7 @@ class Influx{
     }
     //check if the database already exists
     async checkIfExist(){
-        /*
-        * to do
-        * */
+        //TODO
     }
     //create a db in the host
     async createDB(){
