@@ -1,4 +1,4 @@
-
+jest.mock('jquery');
 const $ = require('jquery');
 /*window.$ = {ajax: jest,genMockFunction()}*/
 const Influx = require("../utils/Influx");
@@ -6,10 +6,11 @@ const Influx = require("../utils/Influx");
 global.console = {
     warn: jest.fn(),
     log: jest.fn(),
-    info: jest.fn()
+    info: jest.fn(),
+    ajax: jest.fn()
 };
-
-console.info = jest.fn();
+//jest.resetModules();
+//console.info = jest.fn();
 
 let undefinedInflux = new Influx(null,null,null);
 
@@ -37,8 +38,20 @@ let query = 'q=CREATE DATABASE '+ undefinedInflux.database;
   })
 */
 
-
-
+it("Create null CreateDB", async () => {
+    //expect.assertions(1);
+    undefinedInflux.createDB().catch((err)=>console.log(err));
+    await expect($.ajax).toEqual({
+        url:null+null+'/perquery?',
+        type:'GET',
+        contentType:'application/octet-stream',
+        data: query,
+        processData: false,
+        error: function(test, status, exception) {
+            console.log("Error: " + exception);
+        }
+    });
+});
 
 
 
