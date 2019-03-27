@@ -13,30 +13,6 @@
         </div>
     </div>
 
-    <div class="gf-form">
-        <span class="gf-form-label width-8">Host</span>
-        <input type="text" class="gf-form-input"
-               ng-model="ctrl.panel.host"
-               ng-value="ctrl.default_host"
-               ng-change="ctrl.setHost(ctrl.panel.host)">
-    </div>
-
-    <div class="gf-form">
-        <span class="gf-form-label width-8">Port</span>
-        <input type="text" class="gf-form-input"
-               ng-model="ctrl.panel.port"
-               ng-value="ctrl.default_port"
-               ng-change="ctrl.setPort(ctrl.panel.port)">
-    </div>
-
-    <div class="gf-form">
-        <span class="gf-form-label width-8">Database</span>
-        <input type="text" class="gf-form-input"
-               ng-model="ctrl.panel.database"
-               ng-value="ctrl.default_database"
-               ng-change="ctrl.setDatabase(ctrl.panel.database)">
-    </div>
-
     <div ng-if="ctrl.step === 1">
 
         <form class="page-action-bar">
@@ -151,6 +127,37 @@
             </div>
         </div>
 
+        <h3 class="section-heading">
+            Database Configuration
+        </h3>
+        <div class="gf-form-group">
+            <div class="gf-form">
+                <span class="gf-form-label width-8">Host</span>
+                <input type="text" class="gf-form-input width-10"
+                       ng-model="ctrl.panel.host"
+                       ng-value="ctrl.default_host"
+                       ng-change="ctrl.setHost(ctrl.panel.host)">
+            </div>
+
+            <div class="gf-form">
+                <span class="gf-form-label width-8">Port</span>
+                <input type="text" class="gf-form-input width-8"
+                       ng-model="ctrl.panel.port"
+                       ng-value="ctrl.default_port"
+                       ng-change="ctrl.setPort(ctrl.panel.port)">
+            </div>
+
+            <div class="gf-form">
+                <span class="gf-form-label width-8">Database
+                    <info-popover mode="right-normal">
+                        The Database name must be exactly the name of the Net you are about to import. The reason is that is easier
+                        to remember the name of the database later if you're going to use it: it's the net name, you will find it in the dashboards.
+                    </info-popover>
+                </span>
+                <input type="text" class="gf-form-input width-10"
+                       ng-model="ctrl.dash.title" ng-readonly="true">
+            </div>
+        </div>
 
         <!-- Network inline rappresentation-->
         <!-- ************************ -->
@@ -160,26 +167,30 @@
                 <h5 class="section-heading">Preview</h5>
                 <div class="gf-form">
                     <label class="gf-form-label width-10">Network name</label>
-                    <input type="text" class="gf-form-input max-width-15" ng-model="ctrl.dash.title" ng-readonly="true">
+                    <input type="text" class="gf-form-input width-10" ng-model="ctrl.dash.title" ng-readonly="true">
                 </div>
 
                 <h5 class="section-heading">Nodes</h5>
                 <div ng-repeat="node in ctrl.network.nodi" ng-init="j=$index" class="gf-form">
-                    <label class="gf-form-label min-width-10">{{node.id}}</label>
+
+                    <!-- <label class="gf-form-label min-width-10">{{node.id}}</label> -->
+
+                    <span class="gf-form-label">{{node.id}}</span>
+
                     <div ng-repeat="state in ctrl.network.nodi[j].stati" ng-init="k=$index" class="gf-form">
                         <div class="gf-form">
                             <label class="gf-form-label min-width-10">{{state}}</label>
                         </div>
                         <div class="gf-form gf-form--right-margin">
-                            <label class="gf-form-label width-4">{{ctrl.network.nodi[j].soglie[k]}}</label>
-                        </div>
-                        <div class="gf-form gf-form--right-margin">
-                            <label class="gf-form-label min-width-10">{{ctrl.network.nodi[j].probs[k]}}></label>
+                            <!--<label class="gf-form-label width-4">{{ctrl.network.nodi[j].soglie[k]}}</label> -->
+                            <input type="text" class="gf-form-input width-3"
+                                   ng-model="ctrl.network.nodi[j].soglie[k]">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- ************************ -->
         <div class="gf-form-button-row">
             <button type="button" class="btn btn-success width-12" ng-click="ctrl.saveDashboard()" ng-hide="ctrl.nameExists || ctrl.uidExists" ng-disabled="!ctrl.isValid()">

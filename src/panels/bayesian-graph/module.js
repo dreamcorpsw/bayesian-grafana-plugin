@@ -1,16 +1,30 @@
 import {BayesianTab} from "./bayesian_tab";
 import {GraphCtrl} from "../graph/module";
+const SingletonNetHandler = require('../../utils/SingletonNetHandler');
 
 class BayesianGraphCtrl extends GraphCtrl{
     /** @ngInject*/
-    constructor($scope, $injector, annotationsSrv) {
+    constructor($scope, $injector, annotationsSrv, backendSrv) {
         super($scope, $injector, annotationsSrv);
         this.events.on('init-edit-mode', this.onInitBayesianPanelEditMode.bind(this));
-        $scope.ctrl.panel.title = "Bayesian Graph Panel";
+        $scope.ctrl.panel.title = "Bayesian Graph";
+        this.backend = backendSrv;
+        this.NetHandler = new SingletonNetHandler().getInstance();
+        this.NetHandler.add(this);
     }
     
+    async update(){
+        this.nets = this.NetHandler.getAllNets();
+    }
+    modify(net){
+        this.NetHandler.modify(net);
+    }
     onInitBayesianPanelEditMode() {
-        this.addEditorTab('Bayesian Network', BayesianTab);
+        this.update()
+            .then(()=> {
+                    this.addEditorTab('Bayesian Network', BayesianTab);
+                }
+            );
     }
 }
 

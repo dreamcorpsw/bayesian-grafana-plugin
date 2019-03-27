@@ -1,56 +1,25 @@
 const Looper = require('../utils/Looper');
+const DashboardLoader = require('../utils/DashboardLoader');
 export class Control{
     /** @ngInject */
     constructor($scope,backendSrv,$location){
-        console.info("Control()");
         this.$location = $location;
         this.backendSrv = backendSrv;
         this.panel = $scope.ctrl.panel;
         this.onInitData();
-        this.searchNets()
-            .then(()=>this.importNets()
-                .then(()=>{
-                    //console.info("done importing nets");
-                    this.setDataFromNets();
-                })
-            )
-            .catch((err)=>console.info(err));
     }
-    
     onInitData(){
         this.samples = []; //contenitore per il numero di sample
         this.time = []; //contenitore per i tempi di refresh
-        this.uids = []; //contenitore degli UID delle reti bayesiane
         this.networks = []; //contenitore strutture reti bayesiae
         this.dashboards = []; //contenitore per le dashboard da salvare
         this.hasStarted = [];
-    }
-    
-    searchNets(){
-        //console.info("searchNets()");
-        return this.backendSrv.get('/api/search?tag=bayesian-network')
-            .then(res =>{
-                this.uids = res;
-                console.info(this.uids);
-            })
-            .catch(err=>console.log(err));
-    }
-    async importSingleNet(uid) {
-        return await this.backendSrv
-            .getDashboardByUid(uid)
-            .then(res => {
-                this.dashboards.push(res.dashboard);
-                this.networks.push(res.dashboard.network);
-            })
-            .catch(err => {
-                err.isHandled = true;
-            });
-    }
-    importNets() {
-        //this.dashboards = []; //reset
-        this.networks = []; //reset
-        const promises = this.uids.map(uid_container => this.importSingleNet(uid_container.uid));
-        return Promise.all(promises); //synchro
+        
+        let loader = new DashboardLoader(this.backendSrv);
+        loader.getDashboards((res)=>{
+            this.dashboards = res;
+            this.networks = loader.extract(res);
+        });
     }
     save(index) {
         return this.backendSrv
@@ -59,17 +28,19 @@ export class Control{
                 overwrite: true,
                 folderId: 0,
             })
-            .then(()=>console.info("saved"))
+            //.then(()=>console.info("saved"))
             .catch((err)=>console.info(err));
     }
-    
     setDataFromNets(){
         let monitored,sample,time;
         for(let i=0;i<this.networks.length;i++) {
+            
             monitored = this.networks[i].monitored;
             if(monitored!==null)
                 this.hasStarted.push(monitored); //qui se è true devo azionare automaticamente Looper
             else this.hasStarted.push(false);
+            
+            //this.hasStarted.push(false); //quando aggiorna ripartono sempre
             
             sample = this.networks[i].samples;
             if(sample!==null)
@@ -80,9 +51,13 @@ export class Control{
             if(time!==null)
                 this.time.push(time);
             else this.time.push(10000);
+            
+            /* partenza automatica
+            if(this.hasStarted[i]===true) //funziona ma se ritorno sulla pagina riattiva un altro loop
+                this.start(i);
+                */
         }
     }
-    
     setSamples(value,i){
         if(value!==null) this.samples[i] = value;
     }
@@ -99,7 +74,7 @@ export class Control{
         this.save(index)
             .then(()=>{
                 Looper.setBackendSrv(this.backendSrv);
-                Looper.start(this.networks[index],this.time[index]);
+                Looper.start(this.networks[index],index);
             });
     }
     //stop the monitoring on the specified net
@@ -110,7 +85,7 @@ export class Control{
         this.save(index)
             .then(()=>{
                 Looper.setBackendSrv(this.backendSrv);
-                Looper.stop(this.networks[index]);
+                Looper.stop(this.networks[index],index);
             });
     }
     redirect(){

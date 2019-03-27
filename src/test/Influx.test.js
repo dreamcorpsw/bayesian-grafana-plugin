@@ -1,17 +1,17 @@
 var sinon = require('sinon');
 const $ = require('jquery');
 /*window.$ = {ajax: jest,genMockFunction()}*/
-const Influx = require("../utils/Influx")
+const Influx = require("../utils/Influx");
 
 global.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn()
-}
+};
 
 console.info = jest.fn();
 
-let undefinedInflux = new Influx(null,null,null)
+let undefinedInflux = new Influx(null,null,null);
 
 describe("Created null Influx class", () => {
 
