@@ -1,4 +1,4 @@
-var sinon = require('sinon');
+
 const $ = require('jquery');
 /*window.$ = {ajax: jest,genMockFunction()}*/
 const Influx = require("../utils/Influx");
@@ -40,11 +40,12 @@ let query = 'q=CREATE DATABASE '+ undefinedInflux.database;
 
 
 
-it('makes a GET request for todo items', function () {
-    sinon.replace(jQuery, 'ajax', sinon.fake());
-    undefinedInflux.createDB(42, sinon.fake());
+it("Should print an error", () => {
+    undefinedInflux.createDB().then( () => {
+        expect(console.log).toBeCalledWith("sakldnaslkdj");
+    });
 
-    assert(jQuery.ajax.calledWithMatch({ url: '/todo/42/items' }));
 });
+
 
 

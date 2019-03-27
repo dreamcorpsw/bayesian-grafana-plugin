@@ -18,9 +18,8 @@ class Influx{
     //check if the database already exists
     /*
     async checkIfExist(){
-        //TODO
+    
     }*/
-
     //create a db in the host
     async createDB(){
         let query = 'q=CREATE DATABASE '+this.database;
