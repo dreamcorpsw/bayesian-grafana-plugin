@@ -80,3 +80,7 @@ test("Testing parse", () => {
     expect(wrong_parser.parse()).toEqual(null)
 });
 */
+
+test("test TBA", () => {
+    expect(1).toEqual(1);
+});
