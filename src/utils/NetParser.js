@@ -50,6 +50,7 @@ class NetParser{
         console.info(sum);
         return sum>=0.99;
     }
+
     
     //check logic on cpt
     static checkCpt(NparentsStates,cpt){
