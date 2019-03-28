@@ -2,11 +2,9 @@ import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
 const Influx = require('../utils/Influx');
-const parser = require('../utils/NetParser');
-//const SyntaxChecker = require('../utils/SyntaxChecker');
 
 //template struttura dashboard
-let dashboard_template = {
+/*let dashboard_template = {
     __inputs: [],
     __requires: [
         {
@@ -112,7 +110,7 @@ let dashboard_template = {
     uid: "H39FJ39VMA12MD",
     version: 3,
     network: null
-};
+};*/
 let dashboard_template2 = {
     __inputs: [
         {
@@ -387,13 +385,12 @@ export class ImportNetCtrl {
         this.default_database ="bayesian";
         this.database = this.default_database;
         
-        
-        
+        /*
         // check gnetId in url
         if ($routeParams.gnetId) {
             this.gnetUrl = $routeParams.gnetId;
             this.checkGnetDashboard();
-        }
+        }*/
         
     }
     
@@ -461,14 +458,29 @@ export class ImportNetCtrl {
         dash.network = net; //attacco il pezzo che ricevo al template
         return dash;
     }
-
+    
+    //METODO FACADE
+    createDB(){
+        const influx = new Influx(this.host,this.port,this.dash.network.id);
+        influx.createDB() //operazione unica per rete
+            .then(()=>console.info("database created"))
+            .catch((err)=>console.info(err));
+    }
+    
+    //METODO FACADE
+    checkSematic(net){
+        const parser = require('../utils/NetParser');
+        return parser.checkSemantic(net);
+    }
+    
     onUpload(net) {
         console.info("onUpload");
-        if(parser.checkSemantic(net)) {
-            console.info("checkSemantic ok");
+        if(this.checkSematic(net)) { //FACADE
+
             this.network = net; //per l'html
     
             this.dash = ImportNetCtrl.boxing(net,dashboard_template2);
+            
             /** Default after this line */
             this.dash.id = null;
             this.step = 2;
@@ -600,10 +612,9 @@ export class ImportNetCtrl {
         this.dash.network.host = this.host;
         this.dash.network.port = this.port;
         this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
-        const influx = new Influx(this.host,this.port,this.dash.network.id);
-        influx.createDB() //operazione unica per rete
-            .then(()=>console.info("database created"))
-            .catch((err)=>console.info(err));
+        
+        //FACADE
+        this.createDB();
         
         return this.backendSrv
             .post('api/dashboards/import', {
@@ -621,49 +632,16 @@ export class ImportNetCtrl {
     loadJsonText() {
         try {
             this.parseError = '';
-            //if(SyntaxChecker.checkSyntax(this.jsonText))
-                this.onUpload(JSON.parse(this.jsonText)); //invio tutto quello che ricevo
+            this.onUpload(JSON.parse(this.jsonText)); //invio tutto quello che ricevo
         } catch (err) {
             console.log(err);
             this.parseError = err.message;
         }
     }
     
-    /*
-    checkGnetDashboard() {
-        this.gnetError = '';
-        
-        const match = /(^\d+$)|dashboards\/(\d+)/.exec(this.gnetUrl);
-        let dashboardId;
-        
-        if (match && match[1]) {
-            dashboardId = match[1];
-        } else if (match && match[2]) {
-            dashboardId = match[2];
-        } else {
-            this.gnetError = 'Could not find dashboard';
-        }
-        
-        return this.backendSrv
-            .get('api/gnet/dashboards/' + dashboardId)
-            .then(res => {
-                this.gnetInfo = res;
-                // store reference to grafana.com
-                res.json.gnetId = res.id;
-                this.onUpload(res.json);
-            })
-            .catch(err => {
-                err.isHandled = true;
-                this.gnetError = err.data.message || err;
-            });
-    }
-    */
-    
     back() {
         this.gnetUrl = '';
         this.step = 1;
-        this.gnetError = '';
-        this.gnetInfo = '';
     }
 }
 ImportNetCtrl.templateUrl = 'components/importNet.html';

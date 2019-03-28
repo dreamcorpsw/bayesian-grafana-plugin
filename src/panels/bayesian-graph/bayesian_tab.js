@@ -1,7 +1,3 @@
-//const Looper = require('../../utils/Looper');
-//per utilizzare la classe NetHandler
-const SingletonNetHandler = require("../../utils/SingletonNetHandler");
-
 class BayesianTabCtrl{
     /** @ngInject */
     constructor($scope, backendSrv){
@@ -13,9 +9,6 @@ class BayesianTabCtrl{
         this.onInitData(); //inizializzo le variabili
     }
     onInitData(){
-        //utilizzo degli array contenenti varie informazioni sulla rete che andrò a sfruttare durante l'esecuzione del programma
-        this.nodi = [];
-        
         //variabili che memorizzano la posizione all'interno degli array precedenti che è stata scelta dall'utente a schermo
         this.netPos = null; //indice della rete scelta
         this.nodePos = null; //indice del nodo scelto

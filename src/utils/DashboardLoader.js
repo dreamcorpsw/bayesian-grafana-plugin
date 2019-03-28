@@ -1,19 +1,19 @@
 class DashboardLoader {
     constructor(backend){
         console.info("DashboardLoader");
-        this.backend = backend;
+        this.backendSrv = backend;
         this.dashboards = [];
         this.uids = [];
     }
-    searchDashboards(){
-        return this.backend.get('/api/search?tag=bayesian-network')
+    async searchDashboards(){
+        return this.backendSrv.get('/api/search?tag=bayesian-network')
             .then(res =>{
                 this.uids = res;
             })
             .catch(err=>console.log(err));
     }
     async importSingleDashboard(uid) {
-        return await this.backend
+        return await this.backendSrv
             .getDashboardByUid(uid)
             .then(res => {
                 this.dashboards.push(res.dashboard);
@@ -28,7 +28,7 @@ class DashboardLoader {
         return Promise.all(promises); //synchro
         
     }
-    getDashboards(){ //ritorna le dashboards
+    async getDashboards(){ //ritorna le dashboards
         return this.searchDashboards()
             .then(()=>this.importDashboards()
                 .then(() =>{
@@ -43,7 +43,7 @@ class DashboardLoader {
             networks.push(dashboards[i].network);
         return networks;
     }
-    getNets(){
+    async getNets(){
         return this.getDashboards()
             .then(()=> {
                 return this.extract(this.dashboards);

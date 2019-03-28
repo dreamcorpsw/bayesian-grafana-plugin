@@ -5,8 +5,9 @@ class NetHandler{
         console.info("NetHandler()");
         this.networks = []; //insieme di tutte le reti
         this.dashboards = []; //insieme delle dashboard che contengono una rete
-        this.backend = null; //deve passarmela il primo panel
+        this.backendSrv = null; //deve passarmela il primo panel
         this.bayesian_graphs = []; //instanze di bayesian graph panel
+        this.dashboardLoader = null; //istanza di DashboardLoader
     }
     
     find(bayesian){
@@ -23,10 +24,11 @@ class NetHandler{
     add(bayesian){
         if(this.find(bayesian)===-1){//se è nuovo
             this.bayesian_graphs.push(bayesian); //aggiungo
-            if(this.backend === null)
-                this.backend = bayesian.backend;
+            if(this.backendSrv === null){
+                this.backendSrv = bayesian.backendSrv;
+                this.dashboardLoader = new DashboardLoader(this.backendSrv); //lo creo nuovo solo una volta con il backend
+            }
         }
-        
     }
     
     remove(bayesian){
@@ -37,13 +39,12 @@ class NetHandler{
         console.info("getAllNets()");
         if(this.networks.length === 0){ //devo eseguire i calcoli, O(N)
             console.info("first time");
-            let dashboardLoader = new DashboardLoader(this.backend);
-            dashboardLoader.getDashboards()
+            this.dashboardLoader.getDashboards()
                 .then((res)=>{
                     this.dashboards = res;
-                    this.networks = dashboardLoader.extract(res);
+                    this.networks = this.dashboardLoader.extract(res);
                     this.notifyAll();
-                    return this.networks;
+                    return this.networks; //ridondante forse
                 });
         }
         else return this.networks; // non eseguo nessun conto in più, ritorno la lista pronta O(1)
@@ -66,14 +67,13 @@ class NetHandler{
     }
     
     modify(net){
-        let index = -1 ; //se va male me ne accorgo perchè resta a -1
-        index = this.findNetIndex(net);
+        let index = this.findNetIndex(net);
         this.networks[index] = net;
         this.save(index);
     }
     
     save(index) {
-        return this.backend
+        return this.backendSrv
             .post('api/dashboards/import', {
                 dashboard: this.dashboards[index],
                 overwrite: true,
@@ -88,7 +88,6 @@ class NetHandler{
 }
 
 class SingletonNetHandler { //una classe che controlla le varie istanze di NetHandler
-    
     constructor() {
         console.info("SingletonNetHandler()");
         if (!SingletonNetHandler.instance) {
@@ -98,7 +97,6 @@ class SingletonNetHandler { //una classe che controlla le varie istanze di NetHa
     getInstance() {
         return SingletonNetHandler.instance;
     }
-    
 }
 
 module.exports =  SingletonNetHandler;

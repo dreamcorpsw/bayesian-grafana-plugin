@@ -50,7 +50,6 @@ class NetParser{
         console.info(sum);
         return sum>=0.99;
     }
-    
     //check logic on cpt
     static checkCpt(NparentsStates,cpt){
         if(NparentsStates === 1) return cpt.length === 1 && NetParser.checkNormalize(cpt[0]); //nessun genitore
@@ -65,7 +64,6 @@ class NetParser{
             return true;
         }
     }
-    
     //adding nodes and relative parents
     checkSemantic(text_net) {
         console.info("checkSemantic()");

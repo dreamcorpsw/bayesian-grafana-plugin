@@ -8,11 +8,10 @@ class BayesianGraphCtrl extends GraphCtrl{
         super($scope, $injector, annotationsSrv);
         this.events.on('init-edit-mode', this.onInitBayesianPanelEditMode.bind(this));
         $scope.ctrl.panel.title = "Bayesian Graph";
-        this.backend = backendSrv;
+        this.backendSrv = backendSrv;
         this.NetHandler = new SingletonNetHandler().getInstance();
         this.NetHandler.add(this);
     }
-    
     async update(){
         this.nets = this.NetHandler.getAllNets();
     }
