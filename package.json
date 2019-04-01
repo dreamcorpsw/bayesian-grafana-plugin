@@ -14,8 +14,6 @@
     "ci-test": "jest --coverage && codecov",
     "lint": "jshint --reporter=node_modules/jshint-stylish src/ & jscs src/"
   },
-  "jest": {
-    "modulePathIgnorePatterns": "<rootDir>/src/panels/graph"},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexanderzobnin/grafana-zabbix.git"
