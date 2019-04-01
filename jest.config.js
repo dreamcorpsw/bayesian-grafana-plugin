@@ -23,7 +23,6 @@ module.exports = {
     "^.+\\.(ts|tsx)$": "ts-jest"
   },
   "coverageDirectory": "<rootDir>/tmp/coverage/",
-  "modulePathIgnorePatterns": ["<rootDir>/src/panels/graph"],
   "collectCoverage": false,
   "globals": {
     "ts-jest": {
