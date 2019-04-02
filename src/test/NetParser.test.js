@@ -1,5 +1,3 @@
-
-
 const NetParser = require('../utils/NetParser');
 const jsbayes = require('jsbayes');
 
@@ -9,10 +7,19 @@ global.console = {
     info: jest.fn()
 }
 console.info = jest.fn();
+
 let wrong_net = require("../networks/wrong.network")
 let net = require("../networks/rete.json")
 
 let parser = NetParser.constructor;
+
+test("Verify initial status", () => {
+    NetParser.constructor();
+    expect(NetParser.jsonNet).toEqual(null);
+    expect(NetParser.hasErrors).toEqual(false);
+});
+
+
 NetParser.checkSemantic(net);
 let i, j;
 let nodes = []; //array di nodi ritornati dalla creazione di nodi con jsbayes, serve per collegare ai padri successivamente
@@ -25,10 +32,6 @@ for (i = 0; i < net.nodi.length; i++) {
     }
 
 }
-
-
-
-
 
 /*test("Testing getParentIndex, ritorna l'indice del nodo padre dato il nome di un nodo", () => {
 
@@ -82,5 +85,6 @@ test("Testing parse", () => {
 test("test TBA", () => {
     expect(NetParser.checkSemantic(wrong_net)).toEqual(false);
     expect(NetParser.checkSemantic(net)).toEqual(true);
+    expect(NetParser.hasErrors).toEqual(false);
 });
 
