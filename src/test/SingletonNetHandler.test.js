@@ -1,5 +1,11 @@
 const jsbayes = require('jsbayes');
 
+global.console = {
+    warn: jest.fn(),
+    log: jest.fn(),
+    info: jest.fn()
+}
+
 let logic = require("../utils/LogicNetBuilder");
 let wrong_net = require("../networks/wrong.network");
 let net = require("../networks/rete.json");
@@ -27,4 +33,15 @@ test("Verify correct bayesian graph index", () => {
 });
 
 
+test("Verify adding net", () => {
+    Handler.instance.bayesian_graphs = [];
+    Handler.instance.add(net);
+    expect(Handler.instance.bayesian_graphs.length).toEqual(1);
+});
+
+
+test("Verify remove net", () => {
+   Handler.instance.remove(net);
+   expect(console.info).toBeCalledWith("Remove at position0")
+});
 
