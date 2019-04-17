@@ -14,12 +14,12 @@ console.info = jest.fn();
 let undefinedInflux = new Influx(null,null,null);
 
 describe("Created null Influx class", () => {
-
+    /*
     it('Should call console.info("null host")', () => {
         expect(console.info).toHaveBeenCalledWith("null host")
-    });
-    it('Should call console.info("new Influx"', () => {
-        expect(console.info).toHaveBeenCalledWith("new Influx");
+    });*/
+    it('Should call console.info("New Influx")', () => {
+        expect(console.info).toHaveBeenCalledWith("New Influx");
     });
 });
 
