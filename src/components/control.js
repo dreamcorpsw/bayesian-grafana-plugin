@@ -122,13 +122,13 @@ export class Control{
     delete(index){
         this.stop(index);
         let uid = this.dashboards[index].uid;
-        this.networks.splice(index,1);
         
         //**********
         //da testare
-        let influx = new InfluxProxy(this.networks.host,this.networks.port,this.networks.id);
+        let influx = new InfluxProxy(this.networks[index].host,this.networks[index].port,this.networks[index].id);
         influx.drop()
             .then(()=>{
+                this.networks.splice(index,1);
                 return this.backendSrv.deleteDashboard(uid);
             })
             .catch((err)=>console.info(err));
