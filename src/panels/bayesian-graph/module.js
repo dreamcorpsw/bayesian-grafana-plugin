@@ -16,6 +16,7 @@ class BayesianGraphCtrl extends GraphCtrl{
         this.nets = this.NetHandler.getAllNets();
     }
     modify(net){
+        console.info("BayesianGraph: modify()");
         this.NetHandler.modify(net);
     }
     onInitBayesianPanelEditMode() {

@@ -41,17 +41,17 @@
     </div>
 
     <!-- Saving -->
-    <div class="section gf-form-group"ng-if="ctrl.panel.node_id && !editor.associated">
+    <div class="section gf-form-group"ng-if="ctrl.panel.node_id && !editor.associated && editor.modified">
         <h5 class="section-heading">Saving</h5>
         <div class="gf-form">
-            <button class="btn btn-success width-6" ng-click="editor.save(editor.netPos)">
+            <button class="btn btn-success width-6" ng-click="editor.modify(editor.networks[netPos])">
                 <i class="fa fa-save"></i> Save
             </button>
         </div>
     </div>
 
     <!-- Association -->
-    <div class="section gf-form-group"ng-if="ctrl.panel.node_id && !editor.associated">
+    <div class="section gf-form-group" ng-if="ctrl.panel.node_id && !editor.associated">
         <h5 class="section-heading">Association</h5>
         <div class="gf-form">
             <!-- <span class="gf-form-label width-8">Samples</span>
@@ -85,6 +85,7 @@
         </div>
     </div>
     -->
+
 </div>
 
 

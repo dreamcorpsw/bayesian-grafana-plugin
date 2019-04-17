@@ -1,3 +1,4 @@
+
 class BayesianTabCtrl{
     /** @ngInject */
     constructor($scope, backendSrv){
@@ -14,6 +15,7 @@ class BayesianTabCtrl{
         this.nodePos = null; //indice del nodo scelto
         this.statePos = null; //indice dello stato scelto
         this.thresholdPos = null; //indice della soglia scelta
+        this.modified = false; //variabile per tenere traccia se sono state fatte delle modifiche alle soglie
         
         //variabili grafiche che memorizzano il valore scelto dall'utente a schermo
         this.panel.rete_id = null; //nome della rete scelta
@@ -83,10 +85,13 @@ class BayesianTabCtrl{
     * Net Structure changes
     * */
     modify(net) {
+        console.info("BayesianTab: modify()");
+        this.modified = false; //nascondo il pulsante "save"
         this.parent.modify(net);
     }
     setThreshold(threshold, index){
         //qui modifico le soglie anche nel JSON originale
+        this.modified = true; //visualizzo il pulsante "save"
         console.info("setThreshold() of index "+index);
         if(this.nodePos !== null && threshold !== null){
             this.networks[this.netPos].nodi[this.nodePos].soglie[index] = threshold; //effective changes
@@ -103,6 +108,7 @@ class BayesianTabCtrl{
         this.associated_node = this.nodePos;
         this.networks[this.netPos].nodi[this.nodePos].panel = this.panel.id;
         this.modify(this.networks[this.netPos]);
+        alert("Association Complete");
     }
     dissociate(NodeId){
         this.associated = false;

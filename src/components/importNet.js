@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
-const Influx = require('../utils/Influx');
+const InfluxProxy = require('../utils/InfluxProxy');
 
 //template struttura dashboard
 /*let dashboard_template = {
@@ -263,7 +263,7 @@ let dashboard_template2 = {
             }
         }
     ],
-    refresh: false,
+    refresh: "10s",
     schemaVersion: 16,
     style: "dark",
     tags: ["bayesian-network"],
@@ -327,8 +327,8 @@ let dashboard_template2 = {
         ]
     },
     time: {
-        from: "2019-02-28T08:41:53.444Z",
-        to: "2019-02-28T12:04:08.568Z"
+        from: "now-5m",
+        to: "now"
     },
     timepicker: {
         refresh_intervals: [
@@ -357,7 +357,7 @@ let dashboard_template2 = {
     },
     timezone: "",
     title: "Inference Dashboard",
-    uid: "mjtTRCrmzF",
+    uid: "mjtTRCrmzFds2",
     version: 7,
     network: null
 };
@@ -461,9 +461,11 @@ export class ImportNetCtrl {
     
     //METODO FACADE
     createDB(){
-        const influx = new Influx(this.host,this.port,this.dash.network.id);
+        const influx = new InfluxProxy(this.host,this.port,this.dash.network.id);
         influx.createDB() //operazione unica per rete
-            .then(()=>console.info("database created"))
+            .then(()=>{
+                //console.info("success");
+            })
             .catch((err)=>console.info(err));
     }
     
@@ -549,6 +551,7 @@ export class ImportNetCtrl {
             .then(() => {
                 this.nameExists = false;
                 this.hasNameValidationError = false;
+                //ImportNetCtrl.setUpDatasource(this.dash.network,this.dash);
             })
             .catch(err => {
                 if (err.type === 'EXISTING') {
@@ -609,12 +612,42 @@ export class ImportNetCtrl {
             };
         });
     
+        //possibile boxing della rete
+        //la rete inizialmente può così contenere solo informazioni relative alla struttura dati
+        //aggiungiamo campi dati specifici per il funzionamento
+        //host:
+        //port:
+        //database:
+        //monitored:
+        
+        /*
+        let network_structure = {
+            id: this.dash.network.id,
+            host: this.host,
+            port: this.port,
+            database: this.database,
+            samples: 10000,
+            time: 10000,
+            monitored: false,
+            nodi: this.dash.network.nodi
+        };
+        
+        this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
+        ImportNetCtrl.setUpDatasource(this.dash.network,this.dash); //sistemo il nome del database
+        
+        this.dash.network = network_structure;
+        
+        */
         this.dash.network.host = this.host;
         this.dash.network.port = this.port;
         this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
         
+        ImportNetCtrl.setUpDatasource(this.dash.network,this.dash); //sistemo il nome del database
+        
         //FACADE
         this.createDB();
+        
+        //controllo sull'effettiva creazione del database
         
         return this.backendSrv
             .post('api/dashboards/import', {

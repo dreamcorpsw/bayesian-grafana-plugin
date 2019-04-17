@@ -1,25 +1,11 @@
 import * as $ from 'jquery';
-class Influx{
+const DatabaseConnection = require('./DatabaseConnection');
+class Influx extends  DatabaseConnection{
     //need for host,port and database
     constructor(host,port,database){
-        console.info("new Influx");
-        if(host!==null){
-            this.host = host;
-            if(port!==null) {
-                this.port = port;
-                if (database !== null)
-                    this.database = database;
-                else console.info("null database");
-            }
-            else console.info("null port");
-        }
-        else console.info("null host");
+        super(host,port,database);
+        console.info("New Influx");
     }
-    //check if the database already exists
-    /*
-    async checkIfExist(){
-    
-    }*/
     //create a db in the host
     async createDB(){
         let query = 'q=CREATE DATABASE '+this.database;
@@ -31,6 +17,7 @@ class Influx{
             processData: false,
             success: function (data) {
                 console.info(data);
+                console.info("database created");
             },
             error: function(test, status, exception) {
                 console.log("Error: " + exception);
@@ -66,6 +53,25 @@ class Influx{
             promises.push(this.insertSingle(measurements[i],series[i],values[i]))
         }
         return Promise.all(promises); //synchronization
+    }
+    
+    //cancella il database
+    async drop(){
+        let query = 'q=DROP DATABASE '+this.database;
+        return $.ajax({
+            url:this.host+this.port+'/query?',
+            type:'GET', //controllare
+            contentType:'application/octet-stream',
+            data: query,
+            processData: false,
+            success: function (data) {
+                console.info(data);
+                console.info("database dropped");
+            },
+            error: function(test, status, exception) {
+                console.log("Error: " + exception);
+            }
+        });
     }
     /*
     //returns a single measurement

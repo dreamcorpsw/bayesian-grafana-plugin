@@ -67,12 +67,14 @@ class NetHandler{
     }
     
     modify(net){
+        console.info("NetHandler: modify()");
         let index = this.findNetIndex(net);
         this.networks[index] = net;
         this.save(index);
     }
     
     save(index) {
+        /*
         return this.backendSrv
             .post('api/dashboards/import', {
                 dashboard: this.dashboards[index],
@@ -84,6 +86,15 @@ class NetHandler{
                 this.notifyAll();
             })
             .catch((err)=>console.info(err));
+        */
+        let options = {
+            overwrite : true
+        };
+        if(this.dashboards){
+            console.info(this.dashboards);
+            return this.backendSrv.saveDashboard(this.dashboards[index],options); //in teoria si può semplificare di brutto
+        }
+        
     }
 }
 
