@@ -8,11 +8,11 @@ class DatabaseConnection{
                 this.port = port;
                 if (database !== null)
                     this.database = database;
-                else console.info("null database");
+                else throw "Database null Error";
             }
-            else console.info("null port");
+            else throw "Port null Error";
         }
-        else console.info("null host");
+        else throw "Host null Error";
     }
 }
 

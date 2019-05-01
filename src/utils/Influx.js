@@ -73,33 +73,5 @@ class Influx extends  DatabaseConnection{
             }
         });
     }
-    /*
-    //returns a single measurement
-    async readSingle(node){
-        let query='q=SELECT * FROM '+node+' ORDER BY time DESC LIMIT 1';
-        //console.info("QUERY: "+query);
-        return $.ajax({
-            url:this.host+this.port+'/query?db='+this.database,
-            type:'GET',
-            contentType:'application/octet-stream',
-            data: query,
-            processData: false,
-            success: function (data) {
-                return data.results[0].series[0];
-            },
-            error: function(test, status, exception) {
-                console.log("Error: " + exception);
-            }
-        });
-    }
-    //returns all the last data of the db
-    async read(nodes){
-        const promises = [];
-        for(let i=0;i<nodes.length;i++){
-            promises.push(this.readSingle(nodes[i]));
-        }
-        return Promise.all(promises); //synchronization
-    }
-    */
 }
 module.exports = Influx;

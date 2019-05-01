@@ -11,19 +11,18 @@ global.console = {
 
 console.info = jest.fn();
 
-let undefinedInflux = new Influx(null,null,null);
 
-describe("Created null Influx class", () => {
-    /*
-    it('Should call console.info("null host")', () => {
-        expect(console.info).toHaveBeenCalledWith("null host")
-    });*/
-    it('Should call console.info("New Influx")', () => {
-        expect(console.info).toHaveBeenCalledWith("New Influx");
-    });
+test('Should throw an exception', () => {
+    try{
+        let undefinedInflux = new Influx(null,null,null);
+    }
+    catch (e) {
+        expect(e).toEqual("Host null Error");
+    }
+    
 });
 
-let query = 'q=CREATE DATABASE '+ undefinedInflux.database;
+//let query = 'q=CREATE DATABASE '+ undefinedInflux.database;
 
 /*undefinedInflux.createDB().mockImplementation(
   cb  => {

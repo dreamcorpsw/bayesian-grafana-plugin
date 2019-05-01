@@ -6,7 +6,7 @@ class NetParser{
         this.hasErrors = false;
     }
     //find a parent index for a node
-    static getParentIndex(parentName, nodes){
+    getParentIndex(parentName, nodes){
         let indexParent = -1;
         for(let k=0;k<nodes.length;k++){
             if(parentName === nodes[k].id)
@@ -15,24 +15,23 @@ class NetParser{
         return indexParent;
     }
     //check for logic order in the thresholds: ascending order is the only admitted, possible reordering
-    static ascendingOrder(thresholds){
+    ascendingOrder(thresholds){
         for (let i=0;i<thresholds.length-1;i++){
             if(thresholds[i]>thresholds[i+1]){
                 console.info("Not ascending order in the thresholds given: ");
                 console.info("threshold " + i + " > " + " threshold "+ (i+1));
                 console.info(thresholds[i] + " > " + thresholds[i+1]);
-                console.info("If you want automatic reordering please go to import bayesian network page and check the options"); //optional
                 return false;
             }
         }
         return true;
     }
     //return the result of the check: true, the values are the exact number
-    static isOk(node){
-        return ((node.stati.length === node.soglie.length) && NetParser.ascendingOrder(node.soglie));
+    isOk(node){
+        return ((node.stati.length === node.soglie.length) && this.ascendingOrder(node.soglie));
         //numero di stati e soglie uguale e poi che le soglie siano in ordine crescente
     }
-    static controlNameNodes(jsonNet){
+    controlNameNodes(jsonNet){
         for(let i = 0; i < jsonNet.nodi.length; i++){
             for(let j = 0; j < jsonNet.nodi.length; j++){
                 if(j!==i && jsonNet.nodi[i].id===jsonNet.nodi[j].id){
@@ -43,20 +42,20 @@ class NetParser{
         }
         return false;
     }
-    static checkNormalize(probabilities){
+    checkNormalize(probabilities){
         let sum = 0;
         for(let i=0;i<probabilities.length;i++)
             sum+=probabilities[i];
         console.info(sum);
-        return sum>=0.99;
+        return sum>=0.99 && sum<=1;
     }
     //check logic on cpt
-    static checkCpt(NparentsStates,cpt){
-        if(NparentsStates === 1) return cpt.length === 1 && NetParser.checkNormalize(cpt[0]); //nessun genitore
+    checkCpt(NparentsStates,cpt){
+        if(NparentsStates === 1) return cpt.length === 1 && this.checkNormalize(cpt[0]); //nessun genitore
         else { //ho dei genitori
             if(NparentsStates !== cpt.length) return false;
             for(let i=0;i<cpt.length;i++){
-                if(NetParser.checkNormalize(cpt[i])){
+                if(this.checkNormalize(cpt[i])){
                     console.info("Not normalized probability"); //da migliorare la precisione
                     return false;
                 }
@@ -71,11 +70,11 @@ class NetParser{
         
         //init vars
         let i, j;
-        this.hasErrors = NetParser.controlNameNodes(this.jsonNet); //check for future
+        this.hasErrors = this.controlNameNodes(this.jsonNet); //check for future
         
         //addNode
         for (i = 0; i < this.jsonNet.nodi.length; i++) {
-            if(!NetParser.isOk(this.jsonNet.nodi[i])){
+            if(!this.isOk(this.jsonNet.nodi[i])){
                 this.hasErrors = true; //stop for the future, but not the cycle
                 return false;
             }
@@ -93,7 +92,7 @@ class NetParser{
                 //check num parents
                 if (node.parents !== null) {
                     for (j = 0; j < node.parents.length; j++) {
-                        indexParent = NetParser.getParentIndex(node.parents[j], this.jsonNet.nodi);
+                        indexParent = this.getParentIndex(node.parents[j], this.jsonNet.nodi);
                         if (indexParent !== -1) {  //check for mistake
                             //nodes[i].addParent(nodes[indexParent]);
                             NparentsStates*=this.jsonNet.nodi[indexParent].stati.length;
