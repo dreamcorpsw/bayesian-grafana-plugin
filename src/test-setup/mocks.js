@@ -1,4 +1,4 @@
-export let templateSrvMock = {
+/*export let templateSrvMock = {
   replace: jest.fn().mockImplementation(query => query)
 };
 
@@ -29,3 +29,4 @@ const defaultExports = {
 };
 
 export default defaultExports;
+*/

@@ -1,6 +1,4 @@
-
-const $ = require('jquery');
-/*window.$ = {ajax: jest,genMockFunction()}*/
+jest.mock('jquery', () => 'module not found', {virtual: true});
 const Influx = require("../utils/Influx");
 
 global.console = {

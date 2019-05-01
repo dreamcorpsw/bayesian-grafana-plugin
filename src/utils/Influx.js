@@ -8,6 +8,7 @@ class Influx extends  DatabaseConnection{
     }
     //create a db in the host
     async createDB(){
+        console.info("createDB()");
         let query = 'q=CREATE DATABASE '+this.database;
         return $.ajax({
             url:this.host+this.port+'/query?',

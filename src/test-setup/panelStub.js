@@ -1,6 +1,6 @@
 // JSHint options
 /* jshint ignore:start */
-
+/*
 export class PanelCtrl {
   constructor($scope, $injector) {
     this.$injector = $injector;
@@ -97,3 +97,4 @@ export class PanelCtrl {
   openInspector() {
   }
 }
+*/

@@ -14,9 +14,9 @@ module.exports = {
     "jsx",
     "json"
   ],
-  "moduleNameMapper": {
-    "^[./a-zA-Z0-9$_-]+\.css\!?$": "<rootDir>/src/test-setup/cssStub.js",
-  },
+  //"moduleNameMapper": {
+//    "^[./a-zA-Z0-9$_-]+\.css\!?$": "<rootDir>/src/test-setup/cssStub.js",
+//  },
   "testRegex": "(\\.|/)(test|spec)\\.(jsx?|tsx?)$",
   "transform": {
     "^.+\\.js$": "babel-jest",

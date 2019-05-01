@@ -1,5 +1,3 @@
-
-
 const NetParser = require('../utils/NetParser');
 const jsbayes = require('jsbayes');
 

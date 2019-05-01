@@ -32,6 +32,7 @@ class InfluxProxy extends  DatabaseConnection{
                 if (this.influx !== null){
                     return this.influx.createDB();
                 }
+                else throw "Connection Error";
             })
             .catch((err)=>console.info(err));
     }
@@ -41,6 +42,7 @@ class InfluxProxy extends  DatabaseConnection{
                 if(this.influx !== null){
                     return this.influx.insert(measurements,series,values);
                 }
+                else throw "Connection Error";
             })
             .catch((err)=>console.info(err));
     }
@@ -50,6 +52,7 @@ class InfluxProxy extends  DatabaseConnection{
             .then(()=>{
                 if(this.influx !== null)
                     return this.influx.drop();
+                else throw "Connection Error";
             })
     }
 }

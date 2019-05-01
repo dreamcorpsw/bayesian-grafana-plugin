@@ -1,6 +1,6 @@
 // JSHint options
 /* globals global: false */
-
+/*
 import { JSDOM } from 'jsdom';
 import { PanelCtrl } from './panelStub';
 
@@ -59,12 +59,13 @@ jest.mock('grafana/app/core/config', () => {
     buildInfo: { env: 'development' }
   };
 }, {virtual: true});
-
-jest.mock('jquery', () => 'module not found', {virtual: true});
-
+*/
+//jest.mock('jquery', () => 'module not found', {virtual: true});
+/*
 // Required for loading angularjs
 let dom = new JSDOM('<html><head><script></script></head><body></body></html>');
 // Setup jsdom
 global.window = dom.window;
 global.document = global.window.document;
 global.Node = window.Node;
+*/
