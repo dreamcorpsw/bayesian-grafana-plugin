@@ -27,13 +27,12 @@ grafana/bin/grafana-server
 ```
 Accedere tramite localhost con le credenziali "admin:admin" se è la prima volta, altrimenti con quelle personalizzate.
 
-### Utilizzare il plugin
-
 ## Struttura della rete bayesiana
 
 La struttura della rete bayesiana da importare all'interno del plugin deve avere una specifica codica in formato json.
 Deve rispettare questa struttura.
----------
+
+```
 {
   "id": "net_id",
   "nodi":[
@@ -47,6 +46,7 @@ Deve rispettare questa struttura.
     }
   ]
 }
+```
 --------
 
 ## Built With
