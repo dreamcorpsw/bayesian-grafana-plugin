@@ -100,7 +100,7 @@ class BayesianTabCtrl{
             //console.info("done");
         }
         else {
-            console.error("Impossible to set threshold");
+            appEvents.emit('alert-warning', ['Impossibile aggiornare la soglia',"" ]);
         }
     }
     
