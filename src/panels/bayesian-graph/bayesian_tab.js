@@ -100,6 +100,7 @@ class BayesianTabCtrl{
             //console.info("done");
         }
         else {
+            
             appEvents.emit('alert-warning', ['Impossibile aggiornare la soglia',"" ]);
         }
     }
