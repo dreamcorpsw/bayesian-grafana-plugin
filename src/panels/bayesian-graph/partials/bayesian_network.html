@@ -54,13 +54,8 @@
     <div class="section gf-form-group" ng-if="ctrl.panel.node_id && !editor.associated">
         <h5 class="section-heading">Association</h5>
         <div class="gf-form">
-            <!-- <span class="gf-form-label width-8">Samples</span>
-            <input type="number" class="gf-form-input max-width-5"
-                   ng-model="ctrl.panel.samples"
-                   ng-value="editor.samples"
-                   ng-change="editor.setSamples(ctrl.panel.samples)"> -->
             <span class="gf-form-button">
-              <button class="btn btn-inverse" ng-click="editor.associate(ctrl.panel.node_id)">
+              <button class="btn btn-inverse" ng-click="editor.associate()">
                   Associate
               </button>
             </span>
@@ -71,20 +66,12 @@
     <div class="section gf-form-group" ng-if="editor.associated">
         <h5 class="section-heading">Dissociation</h5>
         <div class="gf-form-button-row">
-            <button class="btn btn-inverse" ng-click="editor.dissociate(ctrl.panel.node_id)">
+            <button class="btn btn-inverse" ng-click="editor.dissociate()">
                 Dissociate
             </button>
         </div>
     </div>
-    <!--
-    <div class="gf-form" ng-if="ctrl.panel.node_id && editor.associated">
-        <div class="gf-form-button-row">
-            <button class="btn btn-inverse" ng-click="editor.dissociate(ctrl.panel.node_id)">
-                Dissocia
-            </button>
-        </div>
-    </div>
-    -->
+
 
 </div>
 

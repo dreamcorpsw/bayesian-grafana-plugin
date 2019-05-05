@@ -86,37 +86,67 @@ class BayesianTabCtrl{
     * */
     modify(net) {
         console.info("BayesianTab: modify()");
-        this.modified = false; //nascondo il pulsante "save"
-        this.parent.modify(net);
-        appEvents.emit('alert-success', ['Salvataggio modifiche rete', '']);
+        let allRight = true;
+        let stato1,stato2,soglia1,soglia2;
+        //check
+        for (let i=0;i<net.nodi.length && allRight;i++){
+            for (let j=0;j<net.nodi[i].soglie.length-1 && allRight;j++) {
+                if (net.nodi[i].soglie[j] >= net.nodi[i].soglie[j + 1]) {
+                    allRight = false;
+                    stato1 = net.nodi[i].stati[j];
+                    stato2 = net.nodi[i].stati[j+1];
+                    soglia1 = net.nodi[i].soglie[j];
+                    soglia2 = net.nodi[i].soglie[j+1];
+                }
+            }
+        }
+        
+        if(allRight){
+            this.modified = false; //nascondo il pulsante "save"
+            this.parent.modify(net);
+            appEvents.emit('alert-success', ['Salvataggio riuscito', '']);
+        }
+        else {
+            appEvents.emit('alert-warning', ['Salvataggio non riuscito', 'Soglia del nodo: '+stato1+"("+soglia1+") > Soglia nodo: "+stato2+"("+soglia2+")"]);
+            throw "Salvataggio non riuscito";
+        }
     }
     setThreshold(threshold, index){
         //qui modifico le soglie anche nel JSON originale
         this.modified = true; //visualizzo il pulsante "save"
-        //console.info("setThreshold() of index "+index);
         if(this.nodePos !== null && threshold !== null){
             this.networks[this.netPos].nodi[this.nodePos].soglie[index] = threshold; //effective changes
-            //console.info("threshold set to: "+threshold);
-            //console.info("done");
         }
         else {
-            
             appEvents.emit('alert-warning', ['Impossibile aggiornare la soglia',"" ]);
         }
     }
     
-    associate(NodeId){
-        this.associated = true;
-        this.associated_node = this.nodePos;
+    associate(){
         this.networks[this.netPos].nodi[this.nodePos].panel = this.panel.id;
-        this.modify(this.networks[this.netPos]);
-        appEvents.emit('alert-success', ['Associazione riuscita',"Il nodo "+this.networks[this.netPos].nodi[this.nodePos].id+" è stato associato a questo flusso dati" ]);
+        try{
+            this.modify(this.networks[this.netPos]);
+            this.associated = true;
+            this.associated_node = this.nodePos;
+            appEvents.emit('alert-success', ['Associazione riuscita',"Il nodo "+this.networks[this.netPos].nodi[this.nodePos].id+" è stato associato a questo flusso dati" ]);
+        }
+        catch (e) {
+            appEvents.emit('alert-error', ['Associazione non riuscita',"" ]);
+        }
+        
     }
-    dissociate(NodeId){
-        this.associated = false;
+    dissociate(){
+        
         this.networks[this.netPos].nodi[this.associated_node].panel = null;
-        this.modify(this.networks[this.netPos]);
-        appEvents.emit('alert-success', ['Dissociazione riuscita',"Il nodo "+this.networks[this.netPos].nodi[this.associated_node].id+" è stato dissociato da questo flusso dati" ]);
+        try{
+            this.modify(this.networks[this.netPos]);
+            this.associated = false;
+            appEvents.emit('alert-success', ['Dissociazione riuscita',"Il nodo "+this.networks[this.netPos].nodi[this.associated_node].id+" è stato dissociato da questo flusso dati" ]);
+        }
+        catch (e) {
+            appEvents.emit('alert-error', ['Dissociazione non riuscita',"" ]);
+        }
+        
     }
 }
 
