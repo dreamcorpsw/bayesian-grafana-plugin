@@ -1,6 +1,8 @@
 const Looper = require('../utils/Looper');
 const DashboardLoader = require('../utils/DashboardLoader');
 const InfluxProxy = require('../utils/InfluxProxy');
+import {appEvents} from 'grafana/app/core/core';
+
 export class Control{
     /** @ngInject */
     constructor($scope,backendSrv,$location){
@@ -22,16 +24,8 @@ export class Control{
                 this.wait();
             });
     }
-    /*
-    async asynchro(){
-        return "waitForMe";
-    }
-    waitForMe(){
-        return this.asynchro().then((msg)=>{
-                return msg;
-        });
-    }*/
-    wait(){ //per ora questa funzione ci salva, ci permette di visualizzare this.networks
+    
+    wait(){
         this.backendSrv.get('/api/search?');
     }
     
@@ -56,7 +50,13 @@ export class Control{
         let options = {
             overwrite : true
         };
-        return this.backendSrv.saveDashboard(this.dashboards[index],options); //in teoria si può semplificare di brutto
+        return this.backendSrv.saveDashboard(this.dashboards[index],options)
+            .then(()=>{
+                appEvents.emit('alert-success', ['Salvataggio della rete avvenuto correttamente', '']);
+            })
+            .catch((err)=>{
+                appEvents.emit('alert-error', ['Impossibile salvare le modifiche alla rete',err]);
+            });
     }
     setDataFromNets(){
         let monitored,sample,time;

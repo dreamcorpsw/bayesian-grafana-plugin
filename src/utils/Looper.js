@@ -1,3 +1,5 @@
+import {appEvents} from "grafana/app/core/core";
+
 const InfluxProxy = require('./InfluxProxy');
 const DashboardLoader = require('./DashboardLoader');
 const LogicNetBuilder = require('./LogicNetBuilder');
@@ -166,11 +168,13 @@ class Looper{
     
     start(net,i){
         this.stopLoop = false;
-        console.info("starts loop net "+(i+1)+" every "+net.time+" ms");
+        //console.info("starts loop net "+(i+1)+" every "+net.time+" ms");
+        appEvents.emit('alert-success', ['Started Loop Net '+(i+1), '']);
         this.loopAsync(net.time); //lo prendo direttamente dalla rete che gli passo
     }
     stop(net,i){
-        console.info("stop loop net "+(i+1));
+        //console.info("stop loop net "+(i+1));
+        appEvents.emit('alert-success', ['Stopped Loop Net '+(i+1), '']);
         //**********
         // provata un po'
         const loader = new DashboardLoader(this.backendSrv);

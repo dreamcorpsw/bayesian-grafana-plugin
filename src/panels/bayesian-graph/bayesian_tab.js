@@ -1,4 +1,4 @@
-
+import {appEvents} from 'grafana/app/core/core';
 class BayesianTabCtrl{
     /** @ngInject */
     constructor($scope, backendSrv){
@@ -88,14 +88,15 @@ class BayesianTabCtrl{
         console.info("BayesianTab: modify()");
         this.modified = false; //nascondo il pulsante "save"
         this.parent.modify(net);
+        appEvents.emit('alert-success', ['Salvataggio modifiche rete', '']);
     }
     setThreshold(threshold, index){
         //qui modifico le soglie anche nel JSON originale
         this.modified = true; //visualizzo il pulsante "save"
-        console.info("setThreshold() of index "+index);
+        //console.info("setThreshold() of index "+index);
         if(this.nodePos !== null && threshold !== null){
             this.networks[this.netPos].nodi[this.nodePos].soglie[index] = threshold; //effective changes
-            console.info("threshold set to: "+threshold);
+            //console.info("threshold set to: "+threshold);
             //console.info("done");
         }
         else {
@@ -108,12 +109,13 @@ class BayesianTabCtrl{
         this.associated_node = this.nodePos;
         this.networks[this.netPos].nodi[this.nodePos].panel = this.panel.id;
         this.modify(this.networks[this.netPos]);
-        alert("Association Complete");
+        appEvents.emit('alert-success', ['Associazione riuscita',"Il nodo "+this.networks[this.netPos].nodi[this.nodePos].id+" è stato associato a questo flusso dati" ]);
     }
     dissociate(NodeId){
         this.associated = false;
         this.networks[this.netPos].nodi[this.associated_node].panel = null;
         this.modify(this.networks[this.netPos]);
+        appEvents.emit('alert-success', ['Dissociazione riuscita',"Il nodo "+this.networks[this.netPos].nodi[this.associated_node].id+" è stato dissociato da questo flusso dati" ]);
     }
 }
 

@@ -4,114 +4,7 @@ import locationUtil from '../utils/location_util';
 const InfluxProxy = require('../utils/InfluxProxy');
 
 //template struttura dashboard
-/*let dashboard_template = {
-    __inputs: [],
-    __requires: [
-        {
-            type: "grafana",
-            id: "grafana",
-            name: "Grafana",
-            version: "5.4.0"
-        }
-    ],
-    annotations: {
-        list: [
-            {
-                builtIn: 1,
-                datasource: "-- Grafana --",
-                enable: true,
-                hide: true,
-                iconColor: "rgba(0, 211, 255, 1)",
-                name: "Annotations & Alerts",
-                type: "dashboard"
-            }
-        ]
-    },
-    editable: false,
-    gnetId: null,
-    graphTooltip: 0,
-    id: null,
-    links: [],
-    panels: [
-        {
-            type: "text",
-            title: "Warning from DreamCorp",
-            gridPos: {
-                x: 4,
-                y: 0,
-                w: 16,
-                h: 8
-            },
-            id: 0,
-            mode: "markdown",
-            content: "# This is a dashboard that include all the information about the net you imported. DO NOT enter edit mode because saving it would break our fecth data mechanism"
-        }
-    ],
-    schemaVersion: 16,
-    style: "dark",
-    tags: ["bayesian-network"],
-    templating: {
-        list: [
-            {
-                allValue: null,
-                current: {
-                    text: "nodo 1",
-                    value: "nodo 1"
-                },
-                hide: 0,
-                includeAll: false,
-                label: "Nodo",
-                multi: false,
-                name: "Nodo",
-                options: [
-                    {
-                        selected: true,
-                        text: "nodo 1",
-                        value: "nodo 1"
-                    }
-                ],
-                query: "nodo 1",
-                skipUrlSync: false,
-                type: "custom"
-            }
-        ]
-    },
-    time: {
-        from: "now-6h",
-        to: "now"
-    },
-    timepicker: {
-        refresh_intervals: [
-            "5s",
-            "10s",
-            "30s",
-            "1m",
-            "5m",
-            "15m",
-            "30m",
-            "1h",
-            "2h",
-            "1d"
-        ],
-        time_options: [
-            "5m",
-            "15m",
-            "1h",
-            "6h",
-            "12h",
-            "24h",
-            "2d",
-            "7d",
-            "30d"
-        ]
-    },
-    timezone: "",
-    title: "Rete Bayesiana",
-    uid: "H39FJ39VMA12MD",
-    version: 3,
-    network: null
-};*/
-let dashboard_template2 = {
+let dashboard_template = {
     __inputs: [
         {
             name: "DS_INFLUXDB-RETE",
@@ -481,7 +374,7 @@ export class ImportNetCtrl {
 
             this.network = net; //per l'html
     
-            this.dash = ImportNetCtrl.boxing(net,dashboard_template2);
+            this.dash = ImportNetCtrl.boxing(net,dashboard_template);
             
             /** Default after this line */
             this.dash.id = null;
@@ -615,14 +508,9 @@ export class ImportNetCtrl {
         //possibile boxing della rete
         //la rete inizialmente può così contenere solo informazioni relative alla struttura dati
         //aggiungiamo campi dati specifici per il funzionamento
-        //host:
-        //port:
-        //database:
-        //monitored:
         
-        /*
         let network_structure = {
-            id: this.dash.network.id,
+            id: this.dash.title,
             host: this.host,
             port: this.port,
             database: this.database,
@@ -632,22 +520,19 @@ export class ImportNetCtrl {
             nodi: this.dash.network.nodi
         };
         
-        this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
+        this.dash.network = network_structure;
+        //this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
         ImportNetCtrl.setUpDatasource(this.dash.network,this.dash); //sistemo il nome del database
         
-        this.dash.network = network_structure;
-        
-        */
+        /*
         this.dash.network.host = this.host;
         this.dash.network.port = this.port;
         this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
         
         ImportNetCtrl.setUpDatasource(this.dash.network,this.dash); //sistemo il nome del database
-        
+        */
         //FACADE
         this.createDB();
-        
-        //controllo sull'effettiva creazione del database
         
         return this.backendSrv
             .post('api/dashboards/import', {
