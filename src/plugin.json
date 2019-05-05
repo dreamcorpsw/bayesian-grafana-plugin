@@ -31,10 +31,6 @@
       "name": "Bayesian Graph"
     },
     {
-      "type": "panel",
-      "name": "Net Status Panel"
-    },
-    {
       "type": "datasource",
       "name": "DreamCorpJson"
     },

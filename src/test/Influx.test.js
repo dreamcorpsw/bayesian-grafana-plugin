@@ -17,26 +17,35 @@ test('Should throw an exception', () => {
     catch (e) {
         expect(e).toEqual("Host null Error");
     }
-    
+
 });
 
-//let query = 'q=CREATE DATABASE '+ undefinedInflux.database;
-
-/*undefinedInflux.createDB().mockImplementation(
-  cb  => {
-      cb({
-          url: undefinedInflux.host + '/query?',
-          type: 'GET',
-          contentType: 'application/octet-stream',
-          data: query,
-          processData: false,
-      });
-  })
-*/
 
 
+test ('Called function createDB', ()=>{
+    let db = new Influx("http://localhost","8086","mydb");
+    db.createDB().catch((err)=>console.log(err));
 
+    //afterEach(() => expect(ajax).toBeCalled())
+});
 
+test ('Called function insertSingle', ()=>{
+    let db = new Influx("http://localhost","8086","mydb");
+    db.insertSingle(1,2,1).catch((err)=>console.log(err));
 
+    //afterEach(() => expect(ajax).toBeCalled())
+});
 
+test ('Called function insert', ()=>{
+    let db = new Influx("http://localhost","8086","mydb");
+    db.insert(1,2,1).catch((err)=>console.log(err));
 
+    //afterEach(() => expect(ajax).toBeCalled())
+});
+
+test ('Called function drop', ()=>{
+    let db = new Influx("http://localhost","8086","mydb");
+    db.drop().catch((err)=>console.log(err));
+
+    //afterEach(() => expect(ajax).toBeCalled())
+});
