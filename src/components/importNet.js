@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import config from 'grafana/app/core/config';
 import locationUtil from '../utils/location_util';
+import {appEvents} from "grafana/app/core/core";
 const InfluxProxy = require('../utils/InfluxProxy');
 
 //template struttura dashboard
@@ -275,9 +276,15 @@ export class ImportNetCtrl {
         this.host = this.default_host;
         this.default_port =":8086";
         this.port = this.default_port;
-        this.default_database ="bayesian";
-        this.database = this.default_database;
+        this.default_password = "";
+        this.password = this.default_password;
+        this.default_user = "";
+        this.user = this.default_user = "";
         
+        this.datasource = null;
+        
+        //this.default_database ="bayesian";
+        //this.database = this.default_database;
         /*
         // check gnetId in url
         if ($routeParams.gnetId) {
@@ -287,19 +294,22 @@ export class ImportNetCtrl {
         
     }
     
+    //metodi per settare i campi dati relativi al salvataggio dati
     setHost(host){
         this.host = host;
     }
     setPort(port){
         this.port = port;
     }
-    setDatabase(database){
-        this.database = database;
+    setUser(user){
+        this.user = user;
+    }
+    setPassword(password){
+        this.password = password;
     }
     
-    static personalizeTemplating(net,dash){
-        console.info("personalizeTemplating");
-        //preparo il templating
+    personalizeTemplating(net,dash){
+        
         let query = "";
         let text = "";
         let value = [];
@@ -334,35 +344,65 @@ export class ImportNetCtrl {
         dash.templating.list[0].current.value=value;
         dash.templating.list[0].options=options;
         dash.templating.list[0].query=query;
-        
-        console.info(text);
-        console.info(value);
-        console.info(options);
-        console.info(query);
-    }
-    static setUpDatasource(net,dash){
-        dash.panels[0].datasource = "InfluxDB-"+net.id; //devo mettere il nome giusto del database qui
-    }
-    static boxing(net, dash){
-        console.info("boxing");
-        ImportNetCtrl.setUpDatasource(net,dash); //aggiungermi la datasource
-        ImportNetCtrl.personalizeTemplating(net,dash); //aggiunta di variabili personalizzate template
-        dash.title = net.id;
-        dash.network = net; //attacco il pezzo che ricevo al template
-        return dash;
     }
     
-    //METODO FACADE
-    createDB(){
-        const influx = new InfluxProxy(this.host,this.port,this.dash.network.id);
-        influx.createDB() //operazione unica per rete
-            .then(()=>{
-                //console.info("success");
+    setUpDatasource(net,dash){
+        dash.panels[0].datasource = "InfluxDB-"+net.id;
+    }
+    
+    //creo quando dopo l'esecuzione di Savedashboard
+    createDatasource(net,dash){
+        
+        //let Url = this.host+this.port;
+        //let password = "Ghi8dav97!";
+        //let user = "admin";
+        const payload = {
+            name:"InfluxDB-"+net.id,
+            type:"influxdb",
+            access:"proxy",
+            url:this.host+this.port,
+            password:this.password,
+            user:this.user,
+            database:net.id,
+            basicAuth:false,
+            withCredentials:false,
+            isDefault:false,
+            version:3,
+            readOnly:false
+        };
+        
+        return this.backendSrv.post('/api/datasources/',payload)
+            .then((ds)=>{
+                this.datasource = ds;
+                dash.panels[0].datasource = ds.name;
+                return ds;
             })
             .catch((err)=>console.info(err));
     }
     
-    //METODO FACADE
+    
+    boxing(net, dash){
+        this.personalizeTemplating(net,dash); //aggiunta di variabili personalizzate template
+        this.setUpDatasource(net,dash); //aggiunge la datasource
+        dash.title = net.id; //aggiorno per vedere a schermo il nome della rete
+        dash.network = net; //attacco la struttura della rete
+        return dash;
+    }
+    
+    //crea un database con il nome uguale a quello della rete importata
+    createDB(){
+        const influx = new InfluxProxy(this.host,this.port,this.dash.network.id);
+        influx.createDB()
+            .then(()=>{
+                appEvents.emit('alert-success', ['Database created', '']);
+            })
+            .catch((err)=>{
+                appEvents.emit('alert-error', ['Database creation error', err]);
+            });
+    }
+    
+    //controlla che sia corretta semanticamente
+    //restituisce true o false
     checkSematic(net){
         const parser = require('../utils/NetParser');
         return parser.checkSemantic(net);
@@ -370,17 +410,18 @@ export class ImportNetCtrl {
     
     onUpload(net) {
         console.info("onUpload");
-        if(this.checkSematic(net)) { //FACADE
+        if(this.checkSematic(net)) {
 
-            this.network = net; //per l'html
+            this.network = net; //per la visualizzazione html
     
-            this.dash = ImportNetCtrl.boxing(net,dashboard_template);
+            //preparo la dashboard con il boxing templetizzato
+            this.dash = this.boxing(net,dashboard_template);
             
-            /** Default after this line */
+            //default
             this.dash.id = null;
             this.step = 2;
             this.inputs = [];
-    
+            
             if (this.dash.__inputs) {
                 for (const input of this.dash.__inputs) {
                     const inputModel = {
@@ -392,25 +433,82 @@ export class ImportNetCtrl {
                         pluginId: input.pluginId,
                         options: [],
                     };
-            
+    
                     if (input.type === 'datasource') {
                         this.setDatasourceOptions(input, inputModel);
                     } else if (!inputModel.info) {
                         inputModel.info = 'Specify a string constant';
                     }
-            
+    
                     this.inputs.push(inputModel);
+                    this.inputs[0].value = "InfluxDB-"+this.dash.network.id;
                 }
             }
-    
+            
             this.inputsValid = this.inputs.length === 0;
+            
+            this.inputValueChanged();
             this.titleChanged();
             this.uidChanged(true);
         }
-        else console.info("Semantic Parse Failed");
+    }
+    
+    addDatasourceOption(){
+        let datasources = config.datasources;
+        //template options for the datasource
+        const options = {
+            id: this.datasource.id,
+            name: this.datasource.name,
+            type: "influxdb",
+            database: this.network.id,
+            jsonData: {
+                keepCookies: []
+            },
+            url: "/api/datasources/proxy/"+this.datasource.id,
+            meta:{
+                alerting: true,
+                annotations: true,
+                baseUrl: "public/app/plugins/datasource/influxdb",
+                dependencies:{
+                    grafanaVersion: "*",
+                    plugins: []
+                },
+                explore: false,
+                hasQueryHelp: true,
+                id: "influxdb",
+                includes: null,
+                info: {
+                    author: {
+                        name: "Grafana Project",
+                        url: "https://grafana.com"
+                    },
+                    description: "InfluxDB Data Source for Grafana",
+                    links: null,
+                    logos: {
+                        small: "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
+                        large: "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg"
+                    },
+                    screenshots: null,
+                    updated: "",
+                    version: "5.0.0"
+                },
+                logs: false,
+                metrics: true,
+                module: "app/plugins/datasource/influxdb/module",
+                name: "InfluxDB",
+                queryOptions: {
+                    minInterval: true
+                },
+                routes: null,
+                type: "datasource"
+            }
+        };
+    
+        datasources[this.datasource.name] = options;
     }
     /** Default */
     setDatasourceOptions(input, inputModel) {
+        /** default */
         const sources = _.filter(config.datasources, val => {
             return val.type === input.pluginId;
         });
@@ -444,7 +542,6 @@ export class ImportNetCtrl {
             .then(() => {
                 this.nameExists = false;
                 this.hasNameValidationError = false;
-                //ImportNetCtrl.setUpDatasource(this.dash.network,this.dash);
             })
             .catch(err => {
                 if (err.type === 'EXISTING') {
@@ -496,55 +593,74 @@ export class ImportNetCtrl {
     }
     
     saveDashboard() {
-        const inputs = this.inputs.map(input => {
-            return {
-                name: input.name,
-                type: input.type,
-                pluginId: input.pluginId,
-                value: input.value,
-            };
-        });
-    
-        //possibile boxing della rete
-        //la rete inizialmente può così contenere solo informazioni relative alla struttura dati
-        //aggiungiamo campi dati specifici per il funzionamento
         
-        let network_structure = {
-            id: this.dash.title,
-            host: this.host,
-            port: this.port,
-            database: this.database,
-            samples: 10000,
-            time: 10000,
-            monitored: false,
-            nodi: this.dash.network.nodi
-        };
+        this.dash.network.id = this.dash.title; //quello che vedo a schermo lo assegno alla struttura della rete
         
-        this.dash.network = network_structure;
-        //this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
-        ImportNetCtrl.setUpDatasource(this.dash.network,this.dash); //sistemo il nome del database
-        
-        /*
-        this.dash.network.host = this.host;
-        this.dash.network.port = this.port;
-        this.dash.network.id = this.dash.title; //cambio effettivamente il nome della rete e la salvo
-        
-        ImportNetCtrl.setUpDatasource(this.dash.network,this.dash); //sistemo il nome del database
-        */
-        //FACADE
-        this.createDB();
-        
-        return this.backendSrv
-            .post('api/dashboards/import', {
-                dashboard: this.dash,
-                overwrite: true,
-                inputs: inputs,
-                folderId: this.folderId,
+        //creo la datasource
+        this.createDatasource(this.dash.network,this.dash)
+            .then(()=>{
+                
+                this.addDatasourceOption();
+                //inputs preparation
+                this.inputs[0].value = this.datasource.name; //aggiorno il valore della dashboard
+                const inputs = this.inputs.map(input => {
+                    return {
+                        name: input.name,
+                        type: input.type,
+                        pluginId: input.pluginId,
+                        value: input.value,
+                    };
+                });
+                //*********
+                
+                //power up of the net structure with some useful information
+                let network_structure = {
+                    id: this.dash.title,
+                    host: this.host,
+                    port: this.port,
+                    samples: 10000,
+                    time: 10000,
+                    monitored: false,
+                    nodi: this.dash.network.nodi
+                };
+                
+                this.dash.network = network_structure; // new boxing
+                //**********
+                
+                //this.setUpDatasource(this.dash.network,this.dash); //set up again to update
+                //datasource setting
+                this.dash.panels[0].datasource = this.datasource.name; //sistemo il nome della datasource
+                //*******
+                
+                //creo il database
+                this.createDB();
+                //***********
+                
+                /** TESTING OUT
+                console.info("saving: ");
+                let dash = this.dash;
+                let network = this.dash.network;
+                let datasource = this.dash.panels[0].datasource;
+                console.info({dash,network,datasource});
+                */
+                
+                //salvo la dashboard
+                return this.backendSrv
+                    .post('api/dashboards/import', {
+                        dashboard: this.dash,
+                        overwrite: true,
+                        inputs: inputs,
+                        folderId: this.folderId,
+                    })
+                    .then(dash => {
+                        const dashUrl = locationUtil.stripBaseFromUrl(dash.importedUrl);
+                        this.$location.url(dashUrl);
+                    })
+                    .catch((err)=>{
+                        appEvents.emit('alert-error', ['Network saving failed', err]);
+                    });
             })
-            .then(res => {
-                const dashUrl = locationUtil.stripBaseFromUrl(res.importedUrl);
-                this.$location.url(dashUrl);
-            });
+            .catch((err)=>console.info(err));
     }
     
     loadJsonText() {

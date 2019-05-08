@@ -25,7 +25,7 @@ class BayesianTabCtrl{
         
         this.associated=false;
         this.associated_node = -1; //indice del nodo già associato se esiste
-        
+
         this.networks = this.parent.nets; //si prende le reti dal panel
     }
     /*
@@ -48,7 +48,6 @@ class BayesianTabCtrl{
             this.nodePos = null;
             this.statePos = null;
             this.thresholdPos = null;
-            console.info("done");
         }
         else{
             this.netPos = null;
@@ -56,7 +55,7 @@ class BayesianTabCtrl{
         }
     }
     setNode(node){
-        console.info("setNode()");
+        //console.info("setNode()");
         if(this.netPos !== null && node !== null) {
             this.nodePos = this.networks[this.netPos].nodi.indexOf(node);
             //console.info("done");
@@ -67,7 +66,7 @@ class BayesianTabCtrl{
         }
     }
     setState(state){
-        console.info("setState()");
+        //console.info("setState()");
         if(this.nodePos !== null && state !== null){
             this.statePos = this.networks[this.netPos].nodi[this.nodePos].stati.indexOf(state);
             //console.info("done");

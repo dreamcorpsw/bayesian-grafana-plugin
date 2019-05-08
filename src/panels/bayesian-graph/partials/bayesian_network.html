@@ -1,16 +1,16 @@
 <div class="editor-row">
     <!-- Configuration -->
-    <div class="section gf-form-group" ng-if="!editor.associated && editor.networks">
+    <div class="section gf-form-group">
         <h5 class="section-heading">Configure</h5>
 
-        <div class="gf-form" >
+        <div class="gf-form"  ng-if="editor.networks" >
             <span class="gf-form-label width-10">Bayesian Network:</span>
             <div class="gf-form-select-wrapper min-width-10">
                 <select  class="gf-form-input" ng-model="ctrl.panel.rete_id" ng-options="rete.id for rete in editor.networks" ng-change="editor.setNet(ctrl.panel.rete_id)"></select>
             </div>
         </div>
-        <!-- bayesian_network.html -->
-        <div ng-repeat="x in editor.networks" ng-if="ctrl.panel.rete_id === editor.networks[$index]" ng-init="i=$index" class="gf-form">
+
+        <div ng-repeat="x in editor.networks" ng-if="editor.networks && !editor.associated && ctrl.panel.rete_id === editor.networks[$index]" ng-init="i=$index" class="gf-form">
             <label class="gf-form-label width-4">Node:</label>
             <div class="gf-form-select-wrapper width-8">
                 <select class="gf-form-input"
@@ -21,23 +21,13 @@
             </div>
         </div>
 
-        <div ng-repeat="state in editor.networks[editor.netPos].nodi[editor.nodePos].stati" ng-init="i = $index" class="gf-form">
+        <div ng-repeat="state in editor.networks[editor.netPos].nodi[editor.nodePos].stati" ng-if="editor.networks" ng-init="i = $index" class="gf-form">
             <label class="gf-form-label width-6">{{state}}</label>
             <input type="text" class="gf-form-input max-width-5"
                    ng-model="ctrl.panel.threshold[i]"
                    ng-value="{{editor.networks[editor.netPos].nodi[editor.nodePos].soglie[i] || ctrl.panel.threshold[i]}}"
                    ng-change="editor.setThreshold(ctrl.panel.threshold[i], i)">
         </div>
-
-        <!--
-        <div ng-repeat="state in editor.networks[editor.netPos].nodi[editor.nodePos].stati" ng-init="i = $index" class="gf-form">
-            <label class="gf-form-label width-6">{{state}}</label>
-            <input type="text" class="gf-form-input max-width-5"
-                   ng-model="ctrl.panel.threshold"
-                   ng-value="{{editor.networks[editor.netPos].nodi[editor.nodePos].soglie[i] || ctrl.panel.threshold}}"
-                   ng-change="editor.setThreshold(ctrl.panel.threshold, i)">
-        </div>
-        -->
     </div>
 
     <!-- Saving -->

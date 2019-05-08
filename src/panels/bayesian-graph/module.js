@@ -12,15 +12,16 @@ class BayesianGraphCtrl extends GraphCtrl{
         this.NetHandler = new SingletonNetHandler().getInstance();
         this.NetHandler.add(this);
     }
-    async update(){
-        this.nets = this.NetHandler.getAllNets();
+    
+    async update(refresh){
+        this.nets = this.NetHandler.getAllNets(refresh);
     }
     modify(net){
-        console.info("BayesianGraph: modify()");
+        //console.info("BayesianGraph: modify()");
         this.NetHandler.modify(net);
     }
     onInitBayesianPanelEditMode() {
-        this.update()
+        this.update(true)
             .then(()=> {
                     this.addEditorTab('Bayesian Network', BayesianTab);
                 }

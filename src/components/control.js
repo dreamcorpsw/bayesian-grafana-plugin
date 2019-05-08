@@ -19,7 +19,6 @@ export class Control{
             .then((res)=>{
                 this.dashboards = res;
                 this.networks = this.loader.extract(res);
-                console.info(this.networks);
                 this.setDataFromNets();
                 this.wait();
             });
@@ -38,15 +37,6 @@ export class Control{
     }
     
     save(index) {
-        /*
-        return this.backendSrv
-            .post('api/dashboards/import', {
-                dashboard: this.dashboards[index],
-                overwrite: true,
-                folderId: 0,
-            })
-            .catch((err)=>console.info(err));
-        */
         let options = {
             overwrite : true
         };
@@ -121,19 +111,44 @@ export class Control{
     
     delete(index){
         this.stop(index);
-        let uid = this.dashboards[index].uid;
-        
-        //**********
-        //da testare
-        let influx = new InfluxProxy(this.networks[index].host,this.networks[index].port,this.networks[index].id);
-        influx.drop()
-            .then(()=>{
-                this.networks.splice(index,1);
-                return this.backendSrv.deleteDashboard(uid);
+        const uid = this.dashboards[index].uid;
+        console.info({uid});
+    
+        //vediamo se esiste
+        this.backendSrv
+            .getDashboardByUid(uid)
+            .then(dash => {
+                console.info(dash.dashboard.network.id);
+                
+                //**********
+                let influx = new InfluxProxy(this.networks[index].host,this.networks[index].port,this.networks[index].id);
+                influx.drop()
+                    .then(()=>{
+                        this.networks.splice(index,1); //elimino dall'array
+                        this.backendSrv.deleteDashboard(uid) //elimina la dashboard
+                            .then(()=>{
+                                this.deleteDatasource(dash.dashboard.network.id) //elimino la datasource
+                                    .then(()=>{
+                                        location.reload(); //refresh della pagina
+                                    });
+                            });
+                    })
+                    .catch((err)=>console.info(err));
+                //**********
             })
-            .catch((err)=>console.info(err));
-        //**********
+            .catch(err => {
+                appEvents.emit('alert-error', ['An error occurred', 'Try refreshing this page']);
+                err.isHandled = true;
+            });
+        
     }
+    
+    deleteDatasource(id){
+        return this.backendSrv.delete('/api/datasources/name/InfluxDB-'+id)
+            .then((res)=>console.info(res))
+            .catch((err)=>console.info(err));
+    }
+    
     redirect(){
         this.$location.url('plugins/dreamcorp-app/page/import-bayesian-network'); //redirecting to importNet
     }

@@ -13,17 +13,20 @@ class NetHandler{
     find(bayesian){
         let index = -1;
         for(let i=0;i<this.bayesian_graphs.length;i++){
-            if(bayesian.id === this.bayesian_graphs[i].id){
+            if(bayesian.panel.id === this.bayesian_graphs[i].panel.id){
                 index = i;
                 break;
             }
         }
+        //console.info({index});
         return index;
     }
     
     add(bayesian){
         if(this.find(bayesian)===-1){//se è nuovo
             this.bayesian_graphs.push(bayesian); //aggiungo
+            //console.info("Added: ");
+            //console.info(bayesian.panel.id);
             if(this.backendSrv === null){
                 this.backendSrv = bayesian.backendSrv;
                 this.dashboardLoader = new DashboardLoader(this.backendSrv); //lo creo nuovo solo una volta con il backend
@@ -35,19 +38,18 @@ class NetHandler{
         console.info("Remove at position" + this.find(bayesian));
     }
     
-    getAllNets(){ //version dashboards
-        console.info("getAllNets()");
-        if(this.networks.length === 0){ //devo eseguire i calcoli, O(N)
-            console.info("first time");
-            this.dashboardLoader.getDashboards()
-                .then((res)=>{
-                    this.dashboards = res;
-                    this.networks = this.dashboardLoader.extract(res);
-                    this.notifyAll();
-                    return this.networks; //ridondante forse
-                });
-        }
-        else return this.networks; // non eseguo nessun conto in più, ritorno la lista pronta O(1)
+    getAllNets(refresh){
+        //console.info("getAllNets()");
+        //console.info({refresh});
+        if(!refresh && this.networks.length !== 0) return this.networks;
+        
+        this.dashboardLoader.getDashboards()
+            .then((res)=>{
+                this.dashboards = res;
+                this.networks = this.dashboardLoader.extract(res);
+                this.notifyAll();
+                return this.networks;
+            });
     }
     
     notify(index){
@@ -55,7 +57,9 @@ class NetHandler{
     }
     
     notifyAll(){
+        //console.info("About to notifiy:");
         for(let i=0;i<this.bayesian_graphs.length;i++){
+            //console.info(this.bayesian_graphs[i].panel.id);
             this.notify(i);
         }
     }
@@ -67,7 +71,7 @@ class NetHandler{
     }
     
     modify(net){
-        console.info("NetHandler: modify()");
+        //console.info("NetHandler: modify()");
         let index = this.findNetIndex(net);
         this.networks[index] = net;
         this.save(index);
@@ -100,7 +104,6 @@ class NetHandler{
 
 class SingletonNetHandler { //una classe che controlla le varie istanze di NetHandler
     constructor() {
-        console.info("SingletonNetHandler()");
         if (!SingletonNetHandler.instance) {
             SingletonNetHandler.instance = new NetHandler(); //deve avvenire solo la prima volta e non ripetersi per fare in modo che il singleton sia garantito
         }
