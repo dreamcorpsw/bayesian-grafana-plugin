@@ -1,5 +1,5 @@
-import './sass/grafana-zabbix.dark.scss';
-import './sass/grafana-zabbix.light.scss';
+import './sass/grafana-dreamcorp.dark.scss';
+import './sass/grafana-dreamcorp.light.scss';
 
 import {DreamCorpAppConfigCtrl} from './components/config';
 import {ImportNetCtrl} from './components/importNet';
