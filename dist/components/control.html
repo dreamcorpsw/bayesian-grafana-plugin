@@ -1,0 +1,99 @@
+<div>
+    <div class="page-header">
+        <h1>Networks Controller</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <p>In this page you can track the status of the monitored bayesian networks.
+                <br>
+                Start or Stop the monitoring of the selected net.
+            </p>
+        </div>
+    </div>
+    <br>
+    <!-- Network inline rappresentation-->
+    <!-- ************************ -->
+    <div class="editor-row">
+        <div class="section gf-form-group" ng-if="ctrl.networks.length">
+
+            <h4 class="section-heading">If you want you can import another bayesian network</h4>
+            <div class="gf-form-inline">
+                <div class="gf-form">
+                    <button class="btn btn-success" ng-click="ctrl.redirect()">Import Bayesian Network</button>
+                </div>
+            </div>
+
+            <br>
+            <br>
+
+            <h5 class="section-heading">Networks</h5>
+            <div class="gf-form" ng-repeat="net in ctrl.networks" ng-init="i=$index">
+                <!--Net id-->
+                <div class="gf-form">
+                    <span class="gf-form-label width-8" style="margin-right: 5px">{{net.id}}</span>
+                </div>
+                <!--Delete-->
+                <div class="gf-form-inline">
+                    <div class="gf-form" style="margin-right: 5px">
+                        <button class="btn btn-danger" ng-click="ctrl.delete(i)">Delete</button>
+                    </div>
+                </div>
+                <!--Samples-->
+                <div class="gf-form">
+                    <span class="gf-form-label width-8">Samples</span>
+                    <input type="number" class="gf-form-input max-width-6"
+                           ng-model="ctrl.panel.samples[i]"
+                           ng-value="ctrl.samples[i]"
+                           ng-change="ctrl.setSamples(ctrl.panel.samples[i],i)">
+                </div>
+                <!--Refresh Time-->
+                <div class="gf-form">
+                    <span class="gf-form-label width-8">Refresh time</span>
+                    <input type="number" class="gf-form-input max-width-6"
+                           ng-model="ctrl.panel.time[i]"
+                           ng-value="ctrl.time[i]"
+                           ng-change="ctrl.setTime(ctrl.panel.time[i],i)">
+                </div>
+                <!--Start-->
+                <div class="gf-form-inline" ng-if="!ctrl.hasStarted[i]">
+                    <div class="gf-form">
+                        <button class="btn btn-success" ng-click="ctrl.start(i)">Start</button>
+                    </div>
+                </div>
+                <!--Stop-->
+                <div class="gf-form-inline" ng-if="ctrl.hasStarted[i]">
+                    <div class="gf-form">
+                        <button class="btn btn-danger" ng-click="ctrl.stop(i)">Stop</button>
+                    </div>
+                </div>
+                <br> <!--break-->
+            </div>
+            <!--
+            <h5 class="section-heading">Nodes</h5>
+            <div ng-repeat="node in ctrl.network.nodi" ng-init="j=$index" class="gf-form">
+                <label class="gf-form-label min-width-10">{{node.id}}</label>
+                <div ng-repeat="state in ctrl.network.nodi[j].stati" ng-init="k=$index" class="gf-form">
+                    <div class="gf-form">
+                        <label class="gf-form-label min-width-10">{{state}}</label>
+                    </div>
+                    <div class="gf-form gf-form--right-margin">
+                        <label class="gf-form-label width-4">{{ctrl.network.nodi[j].soglie[k]}}</label>
+                    </div>
+                    <div class="gf-form gf-form--right-margin">
+                        <label class="gf-form-label min-width-10">{{ctrl.network.nodi[j].probs[k]}}></label>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="gf-form" ng-if="!ctrl.networks.length">
+        <span class="gf-form-label width-15">No networks found</span>
+        <div class="gf-form-inline">
+            <div class="gf-form">
+                <button class="btn btn-success" ng-click="ctrl.redirect()">Import Your First Bayesian Network</button>
+            </div>
+        </div>
+    </div>
+    <!-- ************************ -->
+</div>

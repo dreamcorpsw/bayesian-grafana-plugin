@@ -1,0 +1,39 @@
+{
+  "type": "app",
+  "name": "DreamCorp App",
+  "id": "dreamcorp-app",
+
+  "info": {
+    "description": "DreamCorp plugin for Bayesian Inference in Grafana",
+    "author": {
+      "name": "Dream Corp",
+      "url": "https://github.com/DreamCorpSWE"
+    },
+    "keywords": ["dreamcorp","bayesian","inference","nodes","app","swe","dream"],
+    "logos": {
+      "small": "img/logo_circle.png",
+      "large": "img/logo_circle.png"
+    },
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/DreamCorpSWE/progetto-swe"},
+      {"name": "Docs", "url": "https://github.com/DreamCorpSWE/progetto-swe"},
+      {"name": "License", "url": "https://github.com/DreamCorpSWE/progetto-swe"}
+    ],
+    "version": "4.0",
+    "updated": "2019-05-11"
+  },
+
+  "includes": [
+    {
+      "type": "panel",
+      "name": "Bayesian Graph"
+    },
+    { "type": "page", "name": "Import Bayesian Network", "component": "ImportNetCtrl", "role": "Editor", "addToNav": true},
+    { "type": "page", "name": "Networks Controller", "component": "Control", "role": "Editor", "addToNav": true}
+  ],
+
+  "dependencies": {
+    "grafanaVersion": "5.4.x",
+    "plugins": []
+  }
+}
