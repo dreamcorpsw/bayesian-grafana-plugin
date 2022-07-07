@@ -65,7 +65,7 @@
     "load-grunt-tasks": "~3.2.0",
     "loader-utils": "^1.1.0",
     "lodash": "^4.17.14",
-    "moment": "~2.21.0",
+    "moment": "~2.29.4",
     "ng-annotate-webpack-plugin": "^0.3.0",
     "node-sass": "^4.9.4",
     "prop-types": "^15.6.2",
